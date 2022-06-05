@@ -1,0 +1,43 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "compile main_page",
+            "type": "shell",
+            "windows":{
+                "command": "../build/main_page/compile-dev.bat"
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "compile user user_exit_page",
+            "type": "shell",
+            "windows":{
+                "command": "../build/user/user_exit_page/compile-dev.bat"
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "compile template_page",
+            "type": "shell",
+            "windows":{
+                "command": "../build/template_page/compile-dev.bat"
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}

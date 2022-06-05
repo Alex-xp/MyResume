@@ -1,0 +1,81 @@
+/*---*******************************************************************************************************************---*/
+/* Общий фон */
+body{
+	background-image: url('/public/images/bg2.png');
+}
+
+/*---*******************************************************************************************************************---*/
+/* Стили навигационного меню */
+.navbar-light .navbar-brand{
+	color: #fff;
+}
+.navbar-light .navbar-brand:hover{
+	color: #fff;
+}
+.navbar-light .navbar-nav .nav-link{
+	color: #fff;
+}
+.navbar-light .navbar-nav .nav-link:hover{
+	color: #0dcaf0;
+}
+.navbar-light .navbar-nav .nav-link.active, .navbar-light .navbar-nav .show>.nav-link {
+    color: #0dcaf0;
+}
+
+.navbar-light{
+	border-bottom: 1px solid #eee;
+}
+
+.content{
+	background-color: #fff;
+	border-left: 1px solid #eee;
+	border-right: 1px solid #eee;
+}
+
+
+/*---*******************************************************************************************************************---*/
+/* Верхняя панель слогана компании (на всех страницах) */
+.top_slogan_panel{
+	border-bottom: 1px solid #194b5b; 
+	background-image: url('/public/images/bg1.png');
+}
+
+.top_slogan_panel .company_name_line{
+	background-image: url('/public/images/bg0.png'); 
+	color: #fff;
+}
+.top_slogan_panel .company_name_line h4{
+	padding: 15px 0; 
+	margin: 0; 
+	border-bottom: 1px solid #385d69;
+}
+
+.top_slogan_panel .cmp_panel_data{
+	padding: 25px 0px;
+}
+
+.top_slogan_panel .cmp_panel_data ul{
+	margin: 0; 
+	padding: 0;
+}
+
+.top_slogan_panel .cmp_panel_data li{
+	list-style: none;
+}
+
+.top_slogan_panel .cmp_panel_data li i{
+	color:#194b5b;
+}
+
+.top_slogan_panel .cmp_panel_data .cmp_address {
+	text-align:right;
+}
+
+.top_slogan_panel .cmp_panel_data .cmp_address i{
+	color:#194b5b;
+}
+
+
+/*---*******************************************************************************************************************---*/
+
+
