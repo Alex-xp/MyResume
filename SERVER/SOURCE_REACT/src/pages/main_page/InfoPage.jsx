@@ -20,8 +20,8 @@ export class InfoPage extends React.Component{
     render() {
         return (
             <React.Fragment>
-                <Container>
-                    <div className="content" style={{minHeight:"800px"}}>
+                <Container className="content">
+                    <div style={{minHeight:"800px"}}>
                         ///////
                     </div>
                 </Container>

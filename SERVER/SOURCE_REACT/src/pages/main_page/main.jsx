@@ -15,6 +15,9 @@ import { InfoPage } from './InfoPage';
 import { UserEntity } from '../../components/xdb/UserEntity';
 
 
+import { Scene001 } from '../../components/three_scenes/Scene001';
+
+
 
 /** КОМПОНЕНТ ПРИЛОЖЕНИЯ - БАЗА ПРИЛОЖЕНИЯ (+ шаблон по жизненному циклу компонента) */
 class App extends React.Component {
@@ -52,6 +55,7 @@ class App extends React.Component {
     render() {
         return (
             <AppContext.Provider value={ CONTEXT }>
+                <Scene001/>
                 <TopMenu active="index" user={this.state.user}/>
                 <MsgSystem messages={this.state.messages}/>
 
