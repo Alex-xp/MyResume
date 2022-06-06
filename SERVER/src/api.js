@@ -1,5 +1,5 @@
 
-async function RouteAPI(req, res, mdb, c_user){
+async function RouteAPI(req, res, mdb, result){
     var cmd = req.body.cmd || null;
     var args = req.body.args || null;
     
@@ -8,16 +8,10 @@ async function RouteAPI(req, res, mdb, c_user){
 
     try{
         
-        if(cmd === null){ 
-            const { qResult } = require('./qResult');
-            var rres = new qResult();
-            rres.access = c_user.access_level;
-            res.send(rres); 
-            return true; 
-        }
+        if(cmd === null){ return true;  }
 
         // ПРОВЕРКА API ПОЛЬЗОВАТЕЛЕЙ
-        if(await API_Users(cmd, args, mdb, req, res, c_user)) return true;
+        if(await API_Users(cmd, args, mdb, req, res, result)) return true;
 
     }catch(e){ console.log(e); }
     return true;

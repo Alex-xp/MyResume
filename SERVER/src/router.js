@@ -3,6 +3,7 @@ const { dbClient } = require('./db/dbConnector');
 const { getCurrentUser } = require('./api_users');
 
 const { RouteAPI } = require('./api');
+const { qResult } = require('./qResult');
 
 
 
@@ -43,15 +44,20 @@ function route(app) {
 
 
     app.route("/api").post(async (req, res, next) => {
+        var result = new qResult();
+
         const mdb = new dbClient();
         try{
             await mdb.Connect();
     
             var c_user = await getCurrentUser(res, req, mdb);
-            await RouteAPI(req, res, mdb, c_user);
+            result.user = c_user;
+
+            await RouteAPI(req, res, mdb, result);
     
         }finally{
             await mdb.Close();
+            res.send(result);
             return true;
         }
     });

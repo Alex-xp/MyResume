@@ -1,9 +1,11 @@
+const { UserEntity } = require("./db/UserEntity");
+
 class qResult {
     constructor(){
         this.result = null;
         this.error = null;
         this.messages = [];
-        this.access = 99999;
+        this.user = new UserEntity();
     }
 }
 

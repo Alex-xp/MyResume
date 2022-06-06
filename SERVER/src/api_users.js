@@ -14,10 +14,8 @@ function resetCookies(res){
     setCookies(res, (new Date(Date.now() - 100)), "", "", "" );
 }
 
-async function exitUser(cmd, args, mdb, req, res, c_user) {
-    var reti = new qResult();
-    reti.result = new UserEntity();
-    reti.access = 99999;
+async function exitUser(cmd, args, mdb, req, res, result) {
+    result.result = new UserEntity();
     try {
         var users = mdb.db().collection("users");
 
@@ -29,15 +27,14 @@ async function exitUser(cmd, args, mdb, req, res, c_user) {
         }
 
     } catch(e){
-        reti.error = e+"";
+        result.error = e+"";
         console.log(e);
     }
 
     resetCookies(res);
 
-    reti.messages.push({msg_type:"INFO", text:"Пользователь вышел из системы"});
-    res.send(reti);
-    
+    result.messages.push({msg_type:"INFO", text:"Пользователь вышел из системы"});
+    return true;
 }
 
 // ОБЩЕДОСТУПНАЯ ФУНКЦИЯ ДЛЯ ПРОВЕРКИ ТЕКУЩЕГО ПОЛЬЗОВАТЕЛЯ ПОСЛЕ ВХОДА ПО КУКАМ
@@ -81,10 +78,8 @@ async function getCurrentUser(res, req, mdb){
 
 
 
-async function authUser(cmd, args, mdb, req, res, c_user) {
-    //var reti = { result: {}, error: null };
-    var reti = new qResult();
-    reti.result = new UserEntity();
+async function authUser(cmd, args, mdb, req, res, result) {
+    result.result = new UserEntity();
 
     var a_login = args.login || null;
     var a_password = args.password || null;
@@ -101,7 +96,7 @@ async function authUser(cmd, args, mdb, req, res, c_user) {
             // ВХОД ПО ЛОГИНУ И ПАРОЛЮ
             u_res = await users.findOne({ login: a_login, password: crypto.createHmac('sha256', 'alex-xp').update(a_password).digest('hex') });
             if (u_res === null) {
-                reti.error = "Не совпадают логин и пароль пользователя";
+                result.error = "Не совпадают логин и пароль пользователя";
                 resetCookies(res);
             } else {
                 //u_res = UserEntityByObj(u_res);
@@ -119,28 +114,27 @@ async function authUser(cmd, args, mdb, req, res, c_user) {
         }
 
         if (u_res !== null) {
-            reti.result = u_res;
+            result.result = u_res;
         } else {
-            reti.result = new UserEntity();
+            result.result = new UserEntity();
         }
 
     } catch(e){
-        reti.error = e+"";
+        result.error = e+"";
         console.log(e);
     }
 
-    reti.access = reti.result.access_level;
-    res.send(reti);
+    return true;
 }
 
 
 
-async function API_Users(cmd, args, mdb, req, res, c_user){
+async function API_Users(cmd, args, mdb, req, res, result){
     
     if(cmd === "auth_user"){
-        try{ await authUser(cmd, args, mdb, req, res, c_user); }catch(e){console.log(e);}; return true;
+        try{ await authUser(cmd, args, mdb, req, res, result); }catch(e){console.log(e);}; return true;
     }else if(cmd === "exit_user"){
-        try{ await exitUser(cmd, args, mdb, req, res, c_user); }catch(e){console.log(e);}; return true;
+        try{ await exitUser(cmd, args, mdb, req, res, result); }catch(e){console.log(e);}; return true;
     }
 
     return false;
