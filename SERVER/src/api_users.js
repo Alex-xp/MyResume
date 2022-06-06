@@ -16,6 +16,7 @@ function resetCookies(res){
 
 async function exitUser(cmd, args, mdb, req, res, result) {
     result.result = new UserEntity();
+    result.user = new UserEntity();
     try {
         var users = mdb.db().collection("users");
 
@@ -33,6 +34,7 @@ async function exitUser(cmd, args, mdb, req, res, result) {
 
     resetCookies(res);
 
+    
     result.messages.push({msg_type:"INFO", text:"Пользователь вышел из системы"});
     return true;
 }
@@ -97,19 +99,21 @@ async function authUser(cmd, args, mdb, req, res, result) {
             u_res = await users.findOne({ login: a_login, password: crypto.createHmac('sha256', 'alex-xp').update(a_password).digest('hex') });
             if (u_res === null) {
                 result.error = "Не совпадают логин и пароль пользователя";
+                result.messages.push({msg_type:"INFO", text:"Не совпадают логин и пароль пользователя"});
                 resetCookies(res);
             } else {
-                //u_res = UserEntityByObj(u_res);
 
                 var newSessTime = new Date(Date.now() + 3600 * 24 * 15 * 1000);
                 var u_sess = { expires: newSessTime, s_id: ObjectId() };
                 u_res.session = u_sess;
                 // создаем разовый ключ входа пользователя (он не изменяется на протяжении работы в пределах всей сессии)
-                var k3 = crypto.createHmac('sha256', 'alex-xp').update(x_u_res._id + "" + x_u_res.session.s_id).digest('hex');
+                var k3 = crypto.createHmac('sha256', 'alex-xp').update(u_res._id + "" + u_res.session.s_id).digest('hex');
 
                 setCookies(res, newSessTime, u_res._id, u_sess.s_id, k3);
 
                 await users.updateOne({ _id: u_res._id }, { $set: u_res });
+                
+                result.messages.push({msg_type:"INFO", text:"Пользователь успешно авторизован"});
             }
         }
 

@@ -29,6 +29,7 @@ ECHO "-"
 ECHO "-"
 ECHO "-"
 
+
 ECHO "******* COMPILE user user_exit_page *******" 
 cd user\user_exit_page
 call npx webpack --config webpack.prod.js
@@ -38,6 +39,15 @@ ECHO "-"
 ECHO "-"
 ECHO "-"
 
+
+ECHO "******* COMPILE user login_form *******" 
+cd user\login_form
+call npx webpack --config webpack.prod.js
+cd %ROOT_DIR%
+ECHO "************************************************************************"
+ECHO "-"
+ECHO "-"
+ECHO "-"
 
 
 

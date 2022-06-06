@@ -35,6 +35,9 @@ function route(app) {
 
     app.route('/exit').all((req, res, next) => { renderPage(req, res, "ЗауралСтрой", "user/user_exit_page"); });
 
+    app.route('/login_form').all((req, res, next) => { renderPage(req, res, "ЗауралСтрой", "user/login_form"); });
+
+
 
 
 

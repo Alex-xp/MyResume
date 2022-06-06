@@ -21,11 +21,6 @@ export class TMUserPanel extends React.Component{
 
     }
 
-    // нажали кнопку ВХОД - отображаем диалог входа или регистрации
-    onLoginFormUser(e){
-        e.preventDefault();
-    }
-
 
 
     /* Выход пользователя из системы */
@@ -48,7 +43,7 @@ export class TMUserPanel extends React.Component{
         if(this.props.user.access_level > 1000){
             userPanel = (
                 <React.Fragment>
-                    <Nav.Link href="#" onClick={(e)=>{this.onLoginFormUser(e);}}>
+                    <Nav.Link href="/login_form">
                         <FontAwesomeIcon icon={["fas", "user"]} style={{ color: '#ffc1c1', fontSize:'18px' }} />&nbsp;
                         Вход
                     </Nav.Link>

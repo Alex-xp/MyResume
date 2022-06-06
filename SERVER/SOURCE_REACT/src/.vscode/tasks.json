@@ -28,6 +28,19 @@
             }
         },
         {
+            "label": "compile user login_form",
+            "type": "shell",
+            "windows":{
+                "command": "../build/user/login_form/compile-dev.bat"
+            },
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+
+        {
             "label": "compile template_page",
             "type": "shell",
             "windows":{
