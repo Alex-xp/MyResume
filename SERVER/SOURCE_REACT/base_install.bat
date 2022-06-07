@@ -19,6 +19,16 @@ call npm i --save @fortawesome/react-fontawesome@latest
 
 @REM THREEJS + REACT 
 call npm install three @react-three/fiber
+call npm install @react-three/drei
+call npm install @react-three/postprocessing
+call npm install @react-three/flex
+@REM call npm install @react-three/xr
+call npm install @react-three/cannon
+@REM call npm install @react-three/a11y
+@REM call npm install zustand
+@REM call npm install react-spring
+@REM call npm install @react-spring/web
+@REM call npm install @use-gesture/react
 
 
 pause

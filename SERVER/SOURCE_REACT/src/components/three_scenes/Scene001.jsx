@@ -14,23 +14,47 @@ import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 
 import { useLoader, Canvas, useFrame } from '@react-three/fiber'
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader'
+import * as THREE from 'three';
+import { OrbitControls, TransformControls, useCursor } from '@react-three/drei'
 
 function Box(props) {
 
     const gltf = useLoader(GLTFLoader, '/public/3D/scene_001.glb')
 
     // This reference will give us direct access to the mesh
-    const mesh = React.useRef()
+    const mesh = React.useRef();
+    const cam_control = React.useRef();
+
     // Set up state for the hovered and active state
-    const [hovered, setHover] = React.useState(false)
-    const [active, setActive] = React.useState(false)
+    //const [hovered, setHover] = React.useState(false)
+    //const [active, setActive] = React.useState(false)
     // Subscribe this component to the render-loop, rotate the mesh every frame
-    useFrame((state, delta) => (mesh.current.rotation.y += 0.05*delta))
+    
+    var start = true;
+    
+    useFrame((state, delta) => {
+        //mesh.current.rotation.y += 0.05*delta
+
+        if(start){
+            start = false;
+            //
+            console.log(cam_control.current);
+            cam_control.current.minDistance = 15;
+            cam_control.current.minAzimuthAngle = -Infinity;
+            cam_control.current.maxAzimuthAngle = Infinity;
+        }
+
+    });
+
     // Return view, these are regular three.js elements expressed in JSX
     return (
-      <mesh {...props} ref={mesh}>
-        <primitive object={gltf.scene} />
-      </mesh>
+        <group>
+            <mesh {...props} ref={mesh}>
+                <primitive object={gltf.scene} />
+            </mesh>
+            <OrbitControls makeDefault minDistance={20} maxDistance={40} minPolarAngle={0.2} maxPolarAngle={1.2} minAzimuthAngle={THREE.MathUtils.degToRad(-45)} maxAzimuthAngle={THREE.MathUtils.degToRad(-45)} ref={cam_control} />
+        </group>
+      
     )
 }
 //**************************************************************************************************** */
@@ -77,8 +101,10 @@ export class Scene001 extends React.Component{
                         <Col>
                             <Canvas style={{backgroundColor:"#ffffff", height:"300px"}}>
                                 <ambientLight />
-                                <pointLight position={[10, 10, 10]} />
-                                <Box  position={[0, -4, -3]}/>
+                                <pointLight position={[-15, 15, 15]} />
+                                <pointLight position={[15, 15, -15]} />
+                                <perspectiveCamera position={[0, 5, -10]} lookAt={[0, 0, 0]} />
+                                <Box position={[0, 0, 0]}/>
                             </Canvas>
                         </Col>
                     </Row>
