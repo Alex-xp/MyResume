@@ -59,6 +59,8 @@ class App extends React.Component {
                 <TopMenu active="index" user={this.state.user}/>
                 <MsgSystem messages={this.state.messages}/>
 
+                
+
                 <InfoPage/>
                 
             </AppContext.Provider>

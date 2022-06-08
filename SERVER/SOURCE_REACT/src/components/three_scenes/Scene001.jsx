@@ -83,7 +83,7 @@ export class Scene001 extends React.Component{
                         <div style={{float:"right"}}><b><i>ООО "ЗауралСтрой"</i></b> 640022, г. Курган ул. Карла-Маркса д. 30, офис 505 тел: +7 000-000-00-00</div>
                     </Container>
                 </div>
-                <Container className='content'>
+                <Container className='content' style={{height:"300px", overflow:"clip"}}>
 
                     <Row>
                         <Col md={3} style={{padding:"10px"}}>
@@ -99,13 +99,19 @@ export class Scene001 extends React.Component{
                         </Col>
 
                         <Col>
-                            <Canvas style={{backgroundColor:"#ffffff", height:"300px"}}>
+                            <Canvas style={{backgroundColor:"#e4faff", height:"300px", border: "2px solid #cccccc", borderRadius: "3px", zIndex:1}}>
                                 <ambientLight />
                                 <pointLight position={[-15, 15, 15]} />
                                 <pointLight position={[15, 15, -15]} />
                                 <perspectiveCamera position={[0, 5, -10]} lookAt={[0, 0, 0]} />
-                                <Box position={[0, 0, 0]}/>
+                                <Box position={[0, 0, 0]}/> 
                             </Canvas>
+                            <div style={{fontStyle:"italic", fontSize:"11px", marginTop:"-24px", zIndex:999, position:"relative", float: "right", color:"#eeeeee", padding: "3px"}}>(изображение интерактивно)</div>
+
+                            <div style={{position:"relative", zIndex:9999, top:"-300px", left: "0px", height:"auto", padding:"5px"}}>
+                                ***
+                            </div>
+                            
                         </Col>
                     </Row>
 

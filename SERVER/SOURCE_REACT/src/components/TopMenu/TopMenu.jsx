@@ -31,7 +31,7 @@ export class TopMenu extends React.Component{
                     <Container>
 
                         <Navbar.Brand href="/">
-                            <FontAwesomeIcon icon={["fas", "trowel-bricks"]} style={{ color: '#ffc1c1', fontSize:'18px' }} /> ЗауралСтрой
+                            {/*<FontAwesomeIcon icon={["fas", "trowel-bricks"]} style={{ color: '#ffc1c1', fontSize:'18px' }} /> */}ЗС
                         </Navbar.Brand>
 
                         <Navbar.Toggle aria-controls="zs-navbar-nav" />
