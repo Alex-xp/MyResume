@@ -9,6 +9,8 @@ import { AdminAppBar } from '../../cmps/app_bar/AdminAppBar';
 import { UserEntity } from '../../../components/db_data/UserEntity';
 import { SendApi } from '../../../components/SendApi';
 
+import { UserStatisticPanel } from './UserStatisticPanel';
+
 interface IProps {
 }
 
@@ -45,21 +47,7 @@ export class AdminPanel extends React.Component <IProps, IState>{
             <React.Fragment>
                 <AdminAppBar title="Панель управления" user={this.state.user}/>
 
-                <Card sx={{margin:"5px", marginTop:"10px", backgroundColor: "#eeeeee"}}>
-
-                    
-
-                    <Box sx={{padding:'5px'}}>
-                        <Stack direction="row" justifyContent="flex-start" alignItems="center" spacing={2} sx={{color:"#1976d2"}}>
-                            <AccountCircle/>
-                            <Typography component='span' sx={{fontSize:"18px", fontWeight: 'bold'}}> Данные текущего пользователя</Typography>
-                        </Stack>
-                    </Box>
-                    
-                    <CardContent sx={{backgroundColor: "#ffffff"}}>
-                        !!! СТАТИСТИКА ПО ПОЛЬЗОВАТЕЛЮ !!!
-                    </CardContent>
-                </Card>
+                <UserStatisticPanel user={this.state.user} />
 
 
                 <Grid container spacing={1} sx={{marginTop:"15px"}}>
