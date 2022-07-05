@@ -1,0 +1,38 @@
+{
+    // See https://go.microsoft.com/fwlink/?LinkId=733558
+    // for the documentation about the tasks.json format
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "ADMIN - 001-login",
+            "type": "shell",
+            "command": "ADMIN/001-login/.build/compile-dev.bat",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        {
+            "label": "ADMIN - 002-admin_panel",
+            "type": "shell",
+            "command": "ADMIN/002-admin_panel/.build/compile-dev.bat",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+
+        {
+            "label": "CLIENTS - 001-index",
+            "type": "shell",
+            "command": "CLIENTS/001-index/.build/compile-dev.bat",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        }
+    ]
+}
