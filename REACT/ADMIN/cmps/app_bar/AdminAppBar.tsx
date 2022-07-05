@@ -10,6 +10,7 @@ import { UserEntity } from '../../../components/db_data/UserEntity';
 import { AccountMenu } from './AccountMenu';
 
 interface IProps {
+    title:string,
     user: UserEntity
 }
 
@@ -21,6 +22,7 @@ interface IState {
 export class AdminAppBar extends React.Component <IProps, IState>{
 
     static defaultProps:IProps = {
+        title: "",
         user: new UserEntity()
     }
 
@@ -51,7 +53,7 @@ export class AdminAppBar extends React.Component <IProps, IState>{
                         </IconButton>
 
                         {/* растяжка от начала панели (можно добавлять пункты от начала) */}
-                        <Typography sx={{flexGrow:1}}></Typography>
+                        <Typography sx={{flexGrow:1}}>{this.props.title}</Typography>
 
                         {/* ------------------------------------------------------------------------- */}
                         {/* Кнопка аккаунта пользователя в конце панели (с выпадающим меню) */}
