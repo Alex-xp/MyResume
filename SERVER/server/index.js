@@ -46,6 +46,7 @@ var AdminRouter_1 = require("./AdminRouter");
 var ClientRouter_1 = require("./ClientRouter");
 var ApiRouter_1 = require("./ApiRouter");
 var express_handlebars_1 = require("express-handlebars");
+var InstallRouter_1 = require("./InstallRouter");
 var PORT = 3030;
 var db_conn = new DBConnector_1.DBConnector();
 var app = (0, express_1["default"])();
@@ -62,12 +63,10 @@ app.engine("handlebars", hbs.engine);
 app.set('view engine', 'handlebars');
 app.set('views', './views');
 app.use('/public', express_1["default"].static('./public'));
-var api_router = new ApiRouter_1.ApiRouter(app, db_conn);
-api_router.route();
-var admin_router = new AdminRouter_1.AdminRouter(app, db_conn);
-admin_router.route();
-var client_router = new ClientRouter_1.ClientRouter(app, db_conn);
-client_router.route();
+new InstallRouter_1.InstallRouter(app, db_conn).route();
+new ApiRouter_1.ApiRouter(app, db_conn).route();
+new AdminRouter_1.AdminRouter(app, db_conn).route();
+new ClientRouter_1.ClientRouter(app, db_conn).route();
 app.on('close', function () { return __awaiter(void 0, void 0, void 0, function () {
     return __generator(this, function (_a) {
         switch (_a.label) {

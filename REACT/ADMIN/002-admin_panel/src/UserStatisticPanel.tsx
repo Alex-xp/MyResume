@@ -49,7 +49,7 @@ export class UserStatisticPanel extends React.Component <IProps, IState>{
         return(
             <React.Fragment>
 
-                <Card sx={{margin:"5px", marginTop:"10px", backgroundColor: "#eeeeee"}}>
+                <Card sx={{margin:"5px", marginTop:"20px", backgroundColor: "#eeeeee"}}>
                     <Box sx={{padding:'5px'}}>
                         <Stack direction="row" justifyContent="flex-start" alignItems="center" spacing={2} sx={{color:"#1976d2"}}>
                             <AccountCircle/>
@@ -61,7 +61,7 @@ export class UserStatisticPanel extends React.Component <IProps, IState>{
 
                         <Grid container spacing={2}>
 
-                            <Grid item lg={4}>
+                            <Grid item lg={4} md={6} sm={12} xs={12} >
                                 <TableContainer component={Paper}>
                                     <Table size="small">
                                         {/*<TableHead>
@@ -71,6 +71,11 @@ export class UserStatisticPanel extends React.Component <IProps, IState>{
                                             </TableRow>
                                         </TableHead>*/}
                                         <TableBody>
+                                            <TableRow>
+                                                <TableCell align="right" sx={{width:'200px'}}><b>ID:</b></TableCell>
+                                                <TableCell align="left">{this.props.user.id}</TableCell>
+                                            </TableRow>
+
                                             <TableRow>
                                                 <TableCell align="right" sx={{width:'200px'}}><b>Логин:</b></TableCell>
                                                 <TableCell align="left">{this.props.user.login}</TableCell>
@@ -96,9 +101,9 @@ export class UserStatisticPanel extends React.Component <IProps, IState>{
                                 </TableContainer>
                             </Grid>
 
-                            <Grid item lg={8}>
-                                <Paper sx={{backgroundColor:"#eee", padding: "3px"}}>
-                                    <Typography><b>Статистика:</b></Typography>
+                            <Grid item lg={8} md={6} sm={12} xs={12} >
+                                <Paper sx={{backgroundColor:"#878787", padding: "3px"}}>
+                                    <Typography sx={{padding:"3px 3px 3px 10px", color:"#ffffff"}}><b>Статистика пользователя:</b></Typography>
                                 </Paper>
 
                                 <div style={{marginTop:"10px"}}>

@@ -1,28 +1,21 @@
 import express, { Express, Request, Response } from 'express';
 import { DBConnector } from './db/DBConnector';
-import { BaseRouter, RoutePather } from './BaseRouter';
+import { BaseRouter } from './BaseRouter';
 
 export class AdminRouter extends BaseRouter{
 
     constructor(_app:express.Express, _db_conn:DBConnector){
         super(_app, _db_conn);
+        this.view = 'admin.hbs';
+    }
 
-
-        this.layout_name = "admin.hbs"; // имя шаблона hahdlebars
-        this.prefix = "/admin"; // начальный префикс маршрута
-
+    public route(): void {
 
         //-----------------------------------------------------------------------------------------
         // собираем обработчики маршрутов
 
-        // панель администрирования
-        var admin_panel:RoutePather = new RoutePather("", "002-admin_panel", "Панель управления");
-        admin_panel.access_level = 100;
-        admin_panel.no_access_js = "001-login";
-        this.routePathes.push(admin_panel);
-
-
-
+        this.app.get('/admin', (req, res)=>{ this.run(req, res, "002-admin_panel", "Панель управления", 100, "001-login"); });
+        this.app.get('/admin/users', (req, res)=>{ this.run(req, res, "003-users", "Управление пользователями", 100, "001-login"); });
     }
 
 }

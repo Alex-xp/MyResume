@@ -21,12 +21,13 @@ var ClientRouter = (function (_super) {
     __extends(ClientRouter, _super);
     function ClientRouter(_app, _db_conn) {
         var _this = _super.call(this, _app, _db_conn) || this;
-        _this.layout_name = "index.hbs";
-        _this.prefix = "/";
-        var admin_panel = new BaseRouter_1.RoutePather("", "001-index", "Главная страница");
-        _this.routePathes.push(admin_panel);
+        _this.view = 'index.hbs';
         return _this;
     }
+    ClientRouter.prototype.route = function () {
+        var _this = this;
+        this.app.get("", function (req, res) { _this.run(req, res, "001-index", "Главная страница"); });
+    };
     return ClientRouter;
 }(BaseRouter_1.BaseRouter));
 exports.ClientRouter = ClientRouter;

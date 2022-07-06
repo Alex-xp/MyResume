@@ -21,14 +21,14 @@ var AdminRouter = (function (_super) {
     __extends(AdminRouter, _super);
     function AdminRouter(_app, _db_conn) {
         var _this = _super.call(this, _app, _db_conn) || this;
-        _this.layout_name = "admin.hbs";
-        _this.prefix = "/admin";
-        var admin_panel = new BaseRouter_1.RoutePather("", "002-admin_panel", "Панель управления");
-        admin_panel.access_level = 100;
-        admin_panel.no_access_js = "001-login";
-        _this.routePathes.push(admin_panel);
+        _this.view = 'admin.hbs';
         return _this;
     }
+    AdminRouter.prototype.route = function () {
+        var _this = this;
+        this.app.get('/admin', function (req, res) { _this.run(req, res, "002-admin_panel", "Панель управления", 100, "001-login"); });
+        this.app.get('/admin/users', function (req, res) { _this.run(req, res, "003-users", "Управление пользователями", 100, "001-login"); });
+    };
     return AdminRouter;
 }(BaseRouter_1.BaseRouter));
 exports.AdminRouter = AdminRouter;

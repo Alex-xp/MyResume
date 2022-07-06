@@ -23,6 +23,17 @@
                 "isDefault": true
             }
         },
+        {
+            "label": "ADMIN - 003-users",
+            "type": "shell",
+            "command": "ADMIN/003-users/.build/compile-dev.bat",
+            "problemMatcher": [],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            }
+        },
+        
 
         {
             "label": "CLIENTS - 001-index",

@@ -26,6 +26,13 @@ cd ADMIN\002-admin_panel\.build
 call compile-prod.bat
 cd %ROOT_DIR%
 
+ECHO "************************ COMPILE ADMIN\003-users ************************"
+cd ADMIN\003-users\.build
+call compile-prod.bat
+cd %ROOT_DIR%
+
+
+
 
 
 ECHO "************************ COMPILE CLIENTS\001-index ************************"

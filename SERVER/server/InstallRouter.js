@@ -35,42 +35,54 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
         if (op[0] & 5) throw op[1]; return { value: op[0] ? op[1] : void 0, done: true };
     }
 };
+var __importDefault = (this && this.__importDefault) || function (mod) {
+    return (mod && mod.__esModule) ? mod : { "default": mod };
+};
 exports.__esModule = true;
-exports.BaseRouter = void 0;
-var getCurrentUser_1 = require("./db/getCurrentUser");
-var BaseRouter = (function () {
-    function BaseRouter(_app, _db_conn) {
+exports.InstallRouter = void 0;
+var fs_1 = __importDefault(require("fs"));
+var path_1 = __importDefault(require("path"));
+var InstallRouter = (function () {
+    function InstallRouter(_app, _db_conn) {
         this.app = null;
         this.db_conn = null;
-        this.view = 'index.hbs';
         this.app = _app;
         this.db_conn = _db_conn;
     }
-    BaseRouter.prototype.run = function (req, res, _js_app, _title, access, no_access_js) {
-        if (access === void 0) { access = 99999; }
-        if (no_access_js === void 0) { no_access_js = null; }
-        return __awaiter(this, void 0, void 0, function () {
-            var c_user, user_access;
+    InstallRouter.prototype.route = function () {
+        var _this = this;
+        this.app.get('/install/001', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                res.render("install/install_001.hbs", { app: "install_01" });
+                return [2];
+            });
+        }); });
+        this.app.get('/install/002', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+            var users_table, users_sessions_table;
             return __generator(this, function (_a) {
                 switch (_a.label) {
-                    case 0: return [4, (0, getCurrentUser_1.getCurrentUser)(req, res, this.db_conn)];
+                    case 0:
+                        users_table = fs_1["default"].readFileSync(path_1["default"].normalize(path_1["default"].join(__dirname, "..", "sql", "users.sql")), { encoding: 'utf-8' });
+                        return [4, this.db_conn.Exec({ text: users_table })];
                     case 1:
-                        c_user = _a.sent();
-                        user_access = c_user.u_access;
-                        if (no_access_js !== null && no_access_js.trim() !== '') {
-                            if (user_access > access) {
-                                res.render(this.view, { app: no_access_js, title: "Доступ к разделу закрыт" });
-                                return [2];
-                            }
-                        }
-                        res.render(this.view, { app: _js_app, title: _title });
+                        _a.sent();
+                        return [4, this.db_conn.Exec({
+                                text: "INSERT INTO users (login, password, u_access, user_data, active, email, email_active)VALUES ($1, $2, $3, $4, $5, $6, $7);",
+                                values: ['admin', this.db_conn.sha256('admin'), 0, {}, true, 'admin@admin.ru', true]
+                            })];
+                    case 2:
+                        _a.sent();
+                        users_sessions_table = fs_1["default"].readFileSync(path_1["default"].normalize(path_1["default"].join(__dirname, "..", "sql", "users_sessions.sql")), { encoding: 'utf-8' });
+                        return [4, this.db_conn.Exec({ text: users_sessions_table })];
+                    case 3:
+                        _a.sent();
+                        res.render("install/install_002.hbs", { app: "install_01" });
                         return [2];
                 }
             });
-        });
+        }); });
     };
-    BaseRouter.prototype.route = function () { };
-    return BaseRouter;
+    return InstallRouter;
 }());
-exports.BaseRouter = BaseRouter;
-//# sourceMappingURL=BaseRouter.js.map
+exports.InstallRouter = InstallRouter;
+//# sourceMappingURL=InstallRouter.js.map

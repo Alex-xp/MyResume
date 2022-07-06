@@ -10,6 +10,8 @@ import { UserEntity } from '../../../components/db_data/UserEntity';
 import { SendApi } from '../../../components/SendApi';
 
 import { UserStatisticPanel } from './UserStatisticPanel';
+import { UsersEditorPanel } from './UsersEditorPanel';
+import { StatPanel } from './StatPanel';
 
 interface IProps {
 }
@@ -47,23 +49,14 @@ export class AdminPanel extends React.Component <IProps, IState>{
             <React.Fragment>
                 <AdminAppBar title="Панель управления" user={this.state.user}/>
 
-                <UserStatisticPanel user={this.state.user} />
+                <div style={{padding: "10px"}}>
+                    <StatPanel/>
+                    
+                    <UserStatisticPanel user={this.state.user} />
 
+                    <UsersEditorPanel />
 
-                <Grid container spacing={1} sx={{marginTop:"15px"}}>
-                    <Grid item xs={12} md={4}>
-                        <Paper sx={{padding:"5px"}}>
-                            <Box>1</Box>
-                        </Paper>
-                    </Grid>
-
-                    <Grid item xs={12} md={8}>
-                        <Paper sx={{padding:"5px"}}>
-                            <Box>2</Box>
-                        </Paper>
-                    </Grid>
-                </Grid>
-                
+                </div>
             </React.Fragment>
         );
     }

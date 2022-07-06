@@ -8,6 +8,7 @@ import { ClientRouter } from './ClientRouter';
 import { ApiRouter } from './ApiRouter';
 
 import { create } from 'express-handlebars';
+import { InstallRouter } from './InstallRouter';
 
 const PORT = 3030;
 
@@ -32,21 +33,23 @@ app.set('views', './views');
 app.use('/public', express.static('./public'));
 
 
-var api_router = new ApiRouter(app, db_conn);
-api_router.route();
+
+// !!!!!!! ОТКЛЮЧИТЬ В РАБОТЕ !!!!!!! - ЛУЧШЕ УДАЛИТЬ ВООБЩЕ
+new InstallRouter(app, db_conn).route(); // ПЕРЕУСТАНОВЩИК ДЛЯ БАЗОВОЙ НАСТРОЙКИ И ОТЛАДКЕ
+
+
+
+
+
+// Маршрутизация API
+new ApiRouter(app, db_conn).route();
+
 
 // Маршрутизация админки
-var admin_router = new AdminRouter(app, db_conn);
-admin_router.route();
-
+new AdminRouter(app, db_conn).route();
 
 // Маршрутизация клиентов
-var client_router = new ClientRouter(app, db_conn);
-client_router.route();
-
-
-
-
+new ClientRouter(app, db_conn).route();
 
 
 
