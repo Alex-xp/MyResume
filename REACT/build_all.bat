@@ -40,4 +40,7 @@ cd CLIENTS\001-index\.build
 call compile-prod.bat
 cd %ROOT_DIR%
 
+
+
+
 pause
