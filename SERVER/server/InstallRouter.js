@@ -51,7 +51,7 @@ var InstallRouter = (function () {
     }
     InstallRouter.prototype.route = function () {
         var _this = this;
-        this.app.get('/install/001', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
+        this.app.get('/install', function (req, res) { return __awaiter(_this, void 0, void 0, function () {
             return __generator(this, function (_a) {
                 res.render("install/install_001.hbs", { app: "install_01" });
                 return [2];

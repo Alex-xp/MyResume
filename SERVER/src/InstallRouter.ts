@@ -17,7 +17,7 @@ export class InstallRouter {
 
     public route(){
 
-        this.app.get( '/install/001', async (req: express.Request, res: express.Response) => { 
+        this.app.get( '/install', async (req: express.Request, res: express.Response) => { 
             res.render("install/install_001.hbs", { app: "install_01"});
         });
 

@@ -1,13 +1,15 @@
 import React from 'react';
 
-import { AppBar, Toolbar, IconButton, Drawer, Button, Typography, Menu, MenuItem } from '@mui/material';
+import { AppBar, Toolbar, IconButton, Typography, Menu, MenuItem } from '@mui/material';
 
 import MenuIcon from '@mui/icons-material/Menu';
 
-import { SendApi } from '../../../components/SendApi';
+//import { SendApi } from '../../../components/SendApi';
 import { UserEntity } from '../../../components/db_data/UserEntity';
 
 import { AccountMenu } from './AccountMenu';
+
+import { LeftDrawer } from './left_drawer/LeftDrawer';
 
 interface IProps {
     title:string,
@@ -65,9 +67,7 @@ export class AdminAppBar extends React.Component <IProps, IState>{
 
                 {/* ******************************************************************************************************************************* */}
                 {/* Drawer выпалающая панель с левого угла (выпадает и закрывается от состояния showMenu) */}
-                <Drawer anchor='left' open={this.state.showDrawer} onClose={()=>{this.setState({showDrawer:false})}}>
-                    <Button>КНОПКА В ПАНЕЛИ</Button>
-                </Drawer>
+                <LeftDrawer open={this.state.showDrawer} onClose={()=>{this.setState({showDrawer:false})}}/>
                 {/* ******************************************************************************************************************************* */}
 
             </React.Fragment>
