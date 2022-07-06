@@ -39,6 +39,13 @@ export class UserStatisticPanel extends React.Component <IProps, IState>{
 
     render():React.ReactNode{
         if(this.props.user === null) return (<></>);
+
+        var user_active = (<span style={{color:"#880000"}}>НЕТ</span>);
+        if(this.props.user.active) user_active = (<span style={{color:"#008800"}}>АКТИВЕН</span>);
+
+        var user_mail_active = (<span style={{color:"#880000"}}>НЕТ</span>);
+        if(this.props.user.email_active) user_mail_active = (<span style={{color:"#008800"}}>АКТИВЕН</span>);
+
         return(
             <React.Fragment>
 
@@ -59,26 +66,46 @@ export class UserStatisticPanel extends React.Component <IProps, IState>{
                                     <Table size="small">
                                         {/*<TableHead>
                                             <TableRow>
-                                                <TableCell align="right" component="th" sx={{width:'120px'}}>Ключ:</TableCell>
+                                                <TableCell align="right" component="th" sx={{width:'200px'}}>Ключ:</TableCell>
                                                 <TableCell align="left" component="th">Значение</TableCell>
                                             </TableRow>
                                         </TableHead>*/}
                                         <TableBody>
                                             <TableRow>
-                                                <TableCell align="right" sx={{width:'120px'}}><b>Логин:</b></TableCell>
+                                                <TableCell align="right" sx={{width:'200px'}}><b>Логин:</b></TableCell>
                                                 <TableCell align="left">{this.props.user.login}</TableCell>
                                             </TableRow>
 
                                             <TableRow>
-                                                <TableCell align="right" sx={{width:'120px'}}><b>e-mail:</b></TableCell>
+                                                <TableCell align="right" sx={{width:'200px'}}><b>e-mail:</b></TableCell>
                                                 <TableCell align="left">{this.props.user.email}</TableCell>
                                             </TableRow>
+
+                                            <TableRow>
+                                                <TableCell align="right" sx={{width:'200px'}}><b>Активность:</b></TableCell>
+                                                <TableCell align="left">{user_active}</TableCell>
+                                            </TableRow>
+
+                                            <TableRow>
+                                                <TableCell align="right" sx={{width:'200px'}}><b>Активность e-mail:</b></TableCell>
+                                                <TableCell align="left">{user_mail_active}</TableCell>
+                                            </TableRow>
+
                                         </TableBody>
                                     </Table>
                                 </TableContainer>
                             </Grid>
 
-                            <Grid item lg={8}>222</Grid>
+                            <Grid item lg={8}>
+                                <Paper sx={{backgroundColor:"#eee", padding: "3px"}}>
+                                    <Typography><b>Статистика:</b></Typography>
+                                </Paper>
+
+                                <div style={{marginTop:"10px"}}>
+                                    ////////
+                                </div>
+
+                            </Grid>
 
                         </Grid>
                         
