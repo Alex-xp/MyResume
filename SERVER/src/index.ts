@@ -1,3 +1,11 @@
+/**
+ * АВТОРЫ: 
+ *      alex-xp@list.ru Сунегин Александр
+ * 
+ * ОПИСАНИЕ:
+ * Запуск сервера
+ */
+
 import express, { Express, Request, Response } from 'express';
 import cookieParser from 'cookie-parser';
 

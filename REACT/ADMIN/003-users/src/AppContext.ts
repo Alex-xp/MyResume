@@ -1,3 +1,12 @@
+/**
+ * АВТОРЫ: 
+ *      alex-xp@list.ru Сунегин Александр
+ * 
+ * ОПИСАНИЕ:
+ * Контекст приложения
+ */
+
+
 import React from 'react';
 import { App } from './App';
 import { MsgSystem } from "../../../components/msg_system/MsgSystem";

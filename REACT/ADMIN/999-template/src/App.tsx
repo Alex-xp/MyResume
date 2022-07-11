@@ -49,7 +49,12 @@ export class App extends React.Component <IProps, IState> {
             <AppContext.Provider value={AppContextInit}>
                 <MsgSystem ref={this.msg_ref}/>
                 <AdminAppBar title="Управление пользователями" user={this.state.user}/>
-                ADMIN_PANEL
+
+                <div style={{padding:"10px"}}>
+                    ADMIN_PANEL
+                </div>
+
+                
             </AppContext.Provider>
         );
     }

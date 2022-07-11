@@ -1,3 +1,11 @@
+/**
+ * АВТОРЫ: 
+ *      alex-xp@list.ru Сунегин Александр
+ * 
+ * ОПИСАНИЕ:
+ * Подключение и основные обработчики БД PostgreSQL
+ */
+
 import pg from 'pg';
 
 import crypto from 'crypto';
@@ -76,8 +84,11 @@ export class DBConnector{
     async Query(q:any):Promise<Array<any>>{
         try{
             var cl:pg.PoolClient = await this.begin();
-            var q_res = await cl.query(q);
-            var reti:Array<any> = q_res.rows;
+            var q_res:pg.QueryResult = await cl.query(q);
+
+            var reti:Array<any> = [];
+            for(var row_ii in q_res.rows) reti.push(q_res.rows[row_ii])
+
             await this.end(cl);
             return reti;
         } catch(e){ console.log(e); return []; }

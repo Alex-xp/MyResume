@@ -1,3 +1,11 @@
+/**
+ * АВТОРЫ: 
+ *      alex-xp@list.ru Сунегин Александр
+ * 
+ * ОПИСАНИЕ:
+ * Работа с таблицей пользователей
+ */
+
 import { BaseTable } from './BaseTable';
 import { UserEntity } from "../entityes/UserEntity";
 
@@ -44,6 +52,21 @@ export class UsersTable extends BaseTable{
         }
 
         return new UserEntity(this.db_conn, db_res);
+    }
+
+    /**
+     * Поиск пользователей по логину
+     * @param s_login string - строка поиска
+     * @returns 
+     */
+    public async findUsers(s_login:string):Promise<Array<UserEntity>>{
+        
+        var reti:Array<UserEntity> = await this.db_conn.Query({
+            text:'SELECT * FROM users WHERE login LIKE $1',
+            values: ['%'+s_login+'%']
+        });
+
+        return reti;
     }
 
 

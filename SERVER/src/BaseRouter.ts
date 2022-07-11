@@ -1,3 +1,11 @@
+/**
+ * АВТОРЫ: 
+ *      alex-xp@list.ru Сунегин Александр
+ * 
+ * ОПИСАНИЕ:
+ * Базовый роутер страниц приложения
+ */
+
 import express from 'express';
 import { DBConnector } from './db/DBConnector';
 

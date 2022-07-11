@@ -1,3 +1,12 @@
+/**
+ * АВТОРЫ: 
+ *      alex-xp@list.ru Сунегин Александр
+ * 
+ * ОПИСАНИЕ:
+ * Основная панель приложения с главным меню
+ */
+
+
 import React from 'react';
 
 import { AppBar, Toolbar, IconButton, Typography, Menu, MenuItem } from '@mui/material';

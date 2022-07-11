@@ -1,10 +1,17 @@
-/// Набор команд для работы с пользователями
+/**
+ * АВТОРЫ: 
+ *      alex-xp@list.ru Сунегин Александр
+ * 
+ * ОПИСАНИЕ:
+ * Набор API команд для работы с пользователями
+ */
+
 import { ApiObject } from './ApiObject';
 import { MSG_TYPES, Message, newMessage } from '../api/Message';
 
 import { UsersTable } from '../db/tables/UsersTable';
 import { UserEntity } from '../db/entityes/UserEntity';
-import { getUserApi } from './entityes/ApiUserEntity';
+import { ApiUserEntity, getUserApi } from './entityes/ApiUserEntity';
 import { UsersSessionsTable } from '../db/tables/UsersSessionsTable';
 import { UserSessionEntity } from '../db/entityes/UserSessionEntity';
 
@@ -49,12 +56,39 @@ async function cmd_logout(api_obj:ApiObject):Promise<void>{
     return;
 }
 
+/**
+ * Поиск пользователей find_users
+ * @param api_obj ApiObject - обработчик ответа API
+ * @returns 
+ */
+async function cmd_find_users(api_obj:ApiObject):Promise<void>{
 
+    var search_txt:string = api_obj.args.login || '';
+
+    var reti:Array<ApiUserEntity> = [];
+
+    var ut:UsersTable = new UsersTable(api_obj.db_conn);
+    var users_db:Array<UserEntity> = await ut.findUsers(search_txt);
+    
+    for(var ue_ii in users_db) reti.push(getUserApi(users_db[ue_ii]));
+
+    api_obj.result.result = reti;
+
+    return;
+}
+
+/**
+ * Сборка команд обработчиков запросов API (по тематике текущего файла)
+ * @param api_obj ApiObject - обработчик ответа API
+ * @returns 
+ */
 export async function ApiCmdUsers(api_obj:ApiObject):Promise<Boolean>{
     ///
 
     if(api_obj.cmd === 'login'){ await cmd_login(api_obj); return true; }
     if(api_obj.cmd === 'logout'){ await cmd_logout(api_obj); return true; }
+
+    if(api_obj.cmd === 'find_users'){ await cmd_find_users(api_obj); return true; }
 
 
     return false;

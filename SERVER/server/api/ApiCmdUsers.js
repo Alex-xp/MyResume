@@ -89,6 +89,26 @@ function cmd_logout(api_obj) {
         });
     });
 }
+function cmd_find_users(api_obj) {
+    return __awaiter(this, void 0, void 0, function () {
+        var search_txt, reti, ut, users_db, ue_ii;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    search_txt = api_obj.args.login || '';
+                    reti = [];
+                    ut = new UsersTable_1.UsersTable(api_obj.db_conn);
+                    return [4, ut.findUsers(search_txt)];
+                case 1:
+                    users_db = _a.sent();
+                    for (ue_ii in users_db)
+                        reti.push((0, ApiUserEntity_1.getUserApi)(users_db[ue_ii]));
+                    api_obj.result.result = reti;
+                    return [2];
+            }
+        });
+    });
+}
 function ApiCmdUsers(api_obj) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -105,7 +125,13 @@ function ApiCmdUsers(api_obj) {
                 case 3:
                     _a.sent();
                     return [2, true];
-                case 4: return [2, false];
+                case 4:
+                    if (!(api_obj.cmd === 'find_users')) return [3, 6];
+                    return [4, cmd_find_users(api_obj)];
+                case 5:
+                    _a.sent();
+                    return [2, true];
+                case 6: return [2, false];
             }
         });
     });

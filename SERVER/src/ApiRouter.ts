@@ -1,3 +1,11 @@
+/**
+ * АВТОРЫ: 
+ *      alex-xp@list.ru Сунегин Александр
+ * 
+ * ОПИСАНИЕ:
+ * Маршрутизация API запросов
+ */
+
 import express, { Express, Request, Response } from 'express';
 import { DBConnector } from './db/DBConnector';
 

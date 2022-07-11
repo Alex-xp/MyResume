@@ -108,6 +108,22 @@ var UsersTable = (function (_super) {
             });
         });
     };
+    UsersTable.prototype.findUsers = function (s_login) {
+        return __awaiter(this, void 0, void 0, function () {
+            var reti;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, this.db_conn.Query({
+                            text: 'SELECT * FROM users WHERE login LIKE $1',
+                            values: ['%' + s_login + '%']
+                        })];
+                    case 1:
+                        reti = _a.sent();
+                        return [2, reti];
+                }
+            });
+        });
+    };
     return UsersTable;
 }(BaseTable_1.BaseTable));
 exports.UsersTable = UsersTable;

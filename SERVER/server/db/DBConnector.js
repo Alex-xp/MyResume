@@ -146,7 +146,7 @@ var DBConnector = (function () {
     };
     DBConnector.prototype.Query = function (q) {
         return __awaiter(this, void 0, void 0, function () {
-            var cl, q_res, reti, e_2;
+            var cl, q_res, reti, row_ii, e_2;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0:
@@ -157,7 +157,9 @@ var DBConnector = (function () {
                         return [4, cl.query(q)];
                     case 2:
                         q_res = _a.sent();
-                        reti = q_res.rows;
+                        reti = [];
+                        for (row_ii in q_res.rows)
+                            reti.push(q_res.rows[row_ii]);
                         return [4, this.end(cl)];
                     case 3:
                         _a.sent();

@@ -1,3 +1,11 @@
+/**
+ * АВТОРЫ: 
+ *      alex-xp@list.ru Сунегин Александр
+ * 
+ * ОПИСАНИЕ:
+ * Запуск приложения
+ */
+
 import '../../scss/index.scss';
 
 import React from 'react';
