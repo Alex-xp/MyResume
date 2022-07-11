@@ -109,6 +109,23 @@ function cmd_find_users(api_obj) {
         });
     });
 }
+function set_user_activation(api_obj) {
+    return __awaiter(this, void 0, void 0, function () {
+        var uid, act, ut;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    uid = api_obj.args.id || 0;
+                    act = api_obj.args.active || false;
+                    if (uid === 0)
+                        return [2];
+                    ut = new UsersTable_1.UsersTable(api_obj.db_conn);
+                    return [4, ut.setUserActive(uid, act)];
+                case 1: return [2, _a.sent()];
+            }
+        });
+    });
+}
 function ApiCmdUsers(api_obj) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -131,7 +148,13 @@ function ApiCmdUsers(api_obj) {
                 case 5:
                     _a.sent();
                     return [2, true];
-                case 6: return [2, false];
+                case 6:
+                    if (!(api_obj.cmd === 'set_user_activation')) return [3, 8];
+                    return [4, set_user_activation(api_obj)];
+                case 7:
+                    _a.sent();
+                    return [2, true];
+                case 8: return [2, false];
             }
         });
     });

@@ -40,16 +40,6 @@ export class UsersTable extends React.Component <IProps, IState> {
         this.state = {
             u_selected:null
         };
-
-        // SendApi('current_user', {}, (res)=>{ this.setState({user: res.user}); this.context.current_user = res.user; return true; }, (err)=>{ return true; });
-    }
-
-    componentDidMount(): void {
-        //this.context.app = this;
-    }
-
-    componentWillUnmount(): void {
-        //this.context.app = null;
     }
 
     on_selectUser(ue:UserEntity){
@@ -58,11 +48,11 @@ export class UsersTable extends React.Component <IProps, IState> {
     }
 
     renderRow(ue:UserEntity):React.ReactNode{
-        var user_active = (<Typography component='span'>НЕ АКТИВЕН</Typography>);
-        if(ue.active) user_active = (<Typography component='span'>АКТИВЕН</Typography>);
+        var user_active = (<Typography component='span' sx={{color:'#880000'}}>НЕ АКТИВЕН</Typography>);
+        if(ue.active) user_active = (<Typography component='span' sx={{color:'#008800'}}>АКТИВЕН</Typography>);
 
-        var email_active = (<Typography component='span'>НЕ АКТИВЕН</Typography>);
-        if(ue.email_active) email_active = (<Typography component='span'>АКТИВЕН</Typography>);
+        var email_active = (<Typography component='span' sx={{color:'#880000'}}>НЕ АКТИВЕН</Typography>);
+        if(ue.email_active) email_active = (<Typography component='span' sx={{color:'#008800'}}>АКТИВЕН</Typography>);
 
         var usStyle = { flexWrap:1, fontWeight: 'normal' };
         if(this.state.u_selected !== null && this.state.u_selected.id === ue.id) usStyle = { flexWrap:1, fontWeight: 'bold' };

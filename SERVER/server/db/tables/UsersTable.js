@@ -124,6 +124,19 @@ var UsersTable = (function (_super) {
             });
         });
     };
+    UsersTable.prototype.setUserActive = function (uid, active) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, this.db_conn.Exec({
+                            text: 'UPDATE users SET active=$1 WHERE id=$2',
+                            values: [active, uid]
+                        })];
+                    case 1: return [2, _a.sent()];
+                }
+            });
+        });
+    };
     return UsersTable;
 }(BaseTable_1.BaseTable));
 exports.UsersTable = UsersTable;

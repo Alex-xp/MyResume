@@ -27,7 +27,8 @@ interface IProps {
 interface IState {
     user:UserEntity, /* текущий пользователь */
     users_list: UserEntity[],
-    selected_user: UserEntity
+    selected_user: UserEntity,
+    search_login: string /* для обновления пользователя после правки (повторный поиск) */
 }
 
 export class App extends React.Component <IProps, IState> {
@@ -45,7 +46,8 @@ export class App extends React.Component <IProps, IState> {
         this.state = {
             user:null,
             users_list: [],
-            selected_user: null
+            selected_user: null,
+            search_login: ''
         };
 
         SendApi('current_user', {}, (res)=>{ 
@@ -72,7 +74,10 @@ export class App extends React.Component <IProps, IState> {
      * @param s_login string - текст поиска по логину
      */
     searchUsers(s_login:string){
-        SendApi('find_users', {login:s_login}, (res)=>{ this.setState({users_list:res.result}); return true; }, (err)=>{ return true; });
+        SendApi('find_users', {login:s_login}, (res)=>{ 
+            this.setState({users_list:res.result, search_login:s_login, selected_user: null}); 
+            return true; 
+        }, (err)=>{ return true; });
     }
 
     /**
@@ -94,7 +99,11 @@ export class App extends React.Component <IProps, IState> {
                 <AdminAppBar title="Управление пользователями" user={this.state.user}/>
                 
                 <div style={{padding:"10px"}}>
-                    <UsersActionPanel onSearch={ (stxt:string)=>{ this.searchUsers(stxt); } } selected_user={this.state.selected_user} />
+                    <UsersActionPanel 
+                        onSearch={ (stxt:string)=>{ this.searchUsers(stxt); } } 
+                        selected_user={this.state.selected_user} 
+                        onEditUser={ ()=>{ this.searchUsers(this.state.search_login) } }
+                    />
                 </div>
 
                 <Box sx={{marginTop:'15px'}}>

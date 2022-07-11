@@ -18,6 +18,11 @@ import express from 'express';
 
 export class UsersTable extends BaseTable{
 
+    /**
+     * Получить пользователя по идентификатору
+     * @param user_id number - идентификатор пользователя
+     * @returns Promise<UserEntity>
+     */
     async getUserById(user_id:number):Promise<UserEntity>{
         var u = await this.db_conn.QueryOne({
             text: "SELECT * FROM users WHERE id=$1",
@@ -41,6 +46,12 @@ export class UsersTable extends BaseTable{
         return reti;
     }
 
+    /**
+     * Получить пользователя для авторизации
+     * @param login string логин
+     * @param password string пароль
+     * @returns Promise<UserEntity>
+     */
     public async getUserByLogin(login:string, password:string):Promise<UserEntity>{
         
         var db_res:pg.QueryResult = await this.db_conn.QueryOne({
@@ -57,7 +68,7 @@ export class UsersTable extends BaseTable{
     /**
      * Поиск пользователей по логину
      * @param s_login string - строка поиска
-     * @returns 
+     * @returns Promise<Array<UserEntity>> - массив пользователей
      */
     public async findUsers(s_login:string):Promise<Array<UserEntity>>{
         
@@ -67,6 +78,19 @@ export class UsersTable extends BaseTable{
         });
 
         return reti;
+    }
+
+    /**
+     * Установить активность выбранного пользователя
+     * @param uid number идентификатор пользователя
+     * @param active boolean активность
+     * @returns true в лсучае успеха
+     */
+    public async setUserActive(uid:number, active:boolean):Promise<boolean>{
+        return await this.db_conn.Exec({
+            text:'UPDATE users SET active=$1 WHERE id=$2',
+            values: [active, uid]
+        });
     }
 
 

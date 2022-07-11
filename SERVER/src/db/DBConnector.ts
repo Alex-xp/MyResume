@@ -67,7 +67,7 @@ export class DBConnector{
         return true;
     }
 
-    async Exec(q:any):Promise<Boolean>{
+    async Exec(q:any):Promise<boolean>{
         try{
             var cl:pg.PoolClient = await this.begin();
             await cl.query(q);

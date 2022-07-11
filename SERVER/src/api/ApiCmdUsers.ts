@@ -58,7 +58,7 @@ async function cmd_logout(api_obj:ApiObject):Promise<void>{
 
 /**
  * Поиск пользователей find_users
- * @param api_obj ApiObject - обработчик ответа API
+ * @param api_obj api_obj.args => { search_txt: login_search_text }
  * @returns 
  */
 async function cmd_find_users(api_obj:ApiObject):Promise<void>{
@@ -78,6 +78,20 @@ async function cmd_find_users(api_obj:ApiObject):Promise<void>{
 }
 
 /**
+ * Установить активность пользователя
+ * @param api_obj api_obj.args => { id:user_id, active:boolean }
+ * @returns 
+ */
+async function set_user_activation(api_obj:ApiObject):Promise<boolean>{
+    var uid:number = api_obj.args.id || 0;
+    var act:boolean = api_obj.args.active || false;
+    if(uid===0)return;
+
+    var ut:UsersTable = new UsersTable(api_obj.db_conn);
+    return await ut.setUserActive(uid, act);
+}
+
+/**
  * Сборка команд обработчиков запросов API (по тематике текущего файла)
  * @param api_obj ApiObject - обработчик ответа API
  * @returns 
@@ -89,6 +103,8 @@ export async function ApiCmdUsers(api_obj:ApiObject):Promise<Boolean>{
     if(api_obj.cmd === 'logout'){ await cmd_logout(api_obj); return true; }
 
     if(api_obj.cmd === 'find_users'){ await cmd_find_users(api_obj); return true; }
+    
+    if(api_obj.cmd === 'set_user_activation'){ await set_user_activation(api_obj); return true; }
 
 
     return false;
