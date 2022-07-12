@@ -91,6 +91,59 @@ async function set_user_activation(api_obj:ApiObject):Promise<boolean>{
     return await ut.setUserActive(uid, act);
 }
 
+
+/**
+ * Проверка двойных логинов
+ * @param api_obj api_obj.args => { id:user_id, login:string }
+ * @returns 
+ */
+async function test_user_double(api_obj:ApiObject):Promise<boolean>{
+
+    var uid:number = api_obj.args.id || 0;
+    var login:string = api_obj.args.login || '';
+    if(uid===0) return true;
+    if(login.trim() === '') return true;
+
+    var ut:UsersTable = new UsersTable(api_obj.db_conn);
+    var reti:boolean = await ut.testDoubleLogin(uid, login);
+    api_obj.result.result = reti;
+    return reti;
+}
+
+
+
+
+async function save_user(api_obj:ApiObject):Promise<boolean>{
+
+    var uid:number = api_obj.args.id || 0;
+    var login:string = api_obj.args.login || '';
+    var email:string = api_obj.args.email || '';
+    var active:boolean = api_obj.args.active || false;
+    var u_access:number = api_obj.args.u_access || 10000;
+    var email_active:boolean = api_obj.args.email_active || false;
+    //var activation_code:string = api_obj.args.activation_code || '';
+    //var remember_code:string = api_obj.args.remember_code || '';
+    //var email_code:string = api_obj.args.email_code || '';
+    //var user_data:Object = api_obj.args.user_data || {};
+
+    api_obj.result.result = 0;
+    if(login.trim().length < 6) return false;
+
+    var ut:UsersTable = new UsersTable(api_obj.db_conn);
+    var ret_uid = await ut.save_basic(uid, login, active, email, u_access, email_active);
+    if(ret_uid > 0) {
+        api_obj.result.result = ret_uid;
+        api_obj.result.messages.push(newMessage(MSG_TYPES.SUSSCESS, "Сохранение пользователя", `Пользователь "${login}" успешно сохранен`));
+        return true;
+    }
+
+    api_obj.result.messages.push(newMessage(MSG_TYPES.ERROR, "Сохранение пользователя", "Не могу сохранить пользователя"))
+    return false;
+}
+
+
+
+
 /**
  * Сборка команд обработчиков запросов API (по тематике текущего файла)
  * @param api_obj ApiObject - обработчик ответа API
@@ -105,6 +158,10 @@ export async function ApiCmdUsers(api_obj:ApiObject):Promise<Boolean>{
     if(api_obj.cmd === 'find_users'){ await cmd_find_users(api_obj); return true; }
     
     if(api_obj.cmd === 'set_user_activation'){ await set_user_activation(api_obj); return true; }
+
+    if(api_obj.cmd === 'test_user_double'){ await test_user_double(api_obj); return true; }
+
+    if(api_obj.cmd === 'save_user'){ await save_user(api_obj); return true; }
 
 
     return false;

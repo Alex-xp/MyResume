@@ -73,7 +73,7 @@ export class UsersTable extends BaseTable{
     public async findUsers(s_login:string):Promise<Array<UserEntity>>{
         
         var reti:Array<UserEntity> = await this.db_conn.Query({
-            text:'SELECT * FROM users WHERE login LIKE $1',
+            text:'SELECT * FROM users WHERE login LIKE $1 ORDER BY active DESC, u_access ASC, login ASC LIMIT 1000',
             values: ['%'+s_login+'%']
         });
 
@@ -93,6 +93,45 @@ export class UsersTable extends BaseTable{
         });
     }
 
+    /**
+     * Проверка двойных логинов
+     * @param uid идентификатор или 0
+     * @param login проверяемый логин (не должен быть пустым)
+     * @returns true - есть двойник; false - двойников нет
+     */
+    public async testDoubleLogin(uid:number, login:string):Promise<boolean>{
+        if(login.trim().length < 1) return true;
+
+        var db_res = await this.db_conn.Query({
+            text:"SELECT 8 FROM users WHERE id<>$1 AND login=$2",
+            values: [uid, login]
+        });
+        if(db_res.length > 0) return true;
+
+        return false;
+    }
+
+    public async save_basic(uid:number, login:string, active:boolean, email:string, u_access:number, email_active:boolean):Promise<number>{
+        if(uid>0){
+            // СОХРАНЕНИЕ СУЩЕСТВУЮЩЕГО ПОЛЬЗОВАТЕЛЯ
+
+            if(await this.db_conn.Exec({
+                text:"UPDATE users SET login=$1, active=$2, email=$3, u_access=$4, email_active=$5 WHERE id=$6",
+                values:[login, active, email, u_access, email_active, uid]
+            })) return uid;
+
+            return 0;
+        }else{
+            // ДОБАВЛЕНИЕ НОВОГО ПОЛЬЗОВАТЕЛЯ
+            var db_res = await this.db_conn.QueryOne({
+                text: "INSERT INTO users (login, active, email, u_access, email_active) VALUES ($1, $2, $3, $4, $5) RETURNING id",
+                values:[login, active, email, u_access, email_active]
+            });
+            return db_res.id;
+        }
+        
+        return 0;
+    }
 
     /*
     public async getCurrentUser(req: express.Request, res: express.Response):Promise<UserEntity>{

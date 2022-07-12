@@ -114,7 +114,7 @@ var UsersTable = (function (_super) {
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4, this.db_conn.Query({
-                            text: 'SELECT * FROM users WHERE login LIKE $1',
+                            text: 'SELECT * FROM users WHERE login LIKE $1 ORDER BY active DESC, u_access ASC, login ASC LIMIT 1000',
                             values: ['%' + s_login + '%']
                         })];
                     case 1:
@@ -133,6 +133,54 @@ var UsersTable = (function (_super) {
                             values: [active, uid]
                         })];
                     case 1: return [2, _a.sent()];
+                }
+            });
+        });
+    };
+    UsersTable.prototype.testDoubleLogin = function (uid, login) {
+        return __awaiter(this, void 0, void 0, function () {
+            var db_res;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (login.trim().length < 1)
+                            return [2, true];
+                        return [4, this.db_conn.Query({
+                                text: "SELECT 8 FROM users WHERE id<>$1 AND login=$2",
+                                values: [uid, login]
+                            })];
+                    case 1:
+                        db_res = _a.sent();
+                        if (db_res.length > 0)
+                            return [2, true];
+                        return [2, false];
+                }
+            });
+        });
+    };
+    UsersTable.prototype.save_basic = function (uid, login, active, email, u_access, email_active) {
+        return __awaiter(this, void 0, void 0, function () {
+            var db_res;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (!(uid > 0)) return [3, 2];
+                        return [4, this.db_conn.Exec({
+                                text: "UPDATE users SET login=$1, active=$2, email=$3, u_access=$4, email_active=$5 WHERE id=$6",
+                                values: [login, active, email, u_access, email_active, uid]
+                            })];
+                    case 1:
+                        if (_a.sent())
+                            return [2, uid];
+                        return [2, 0];
+                    case 2: return [4, this.db_conn.QueryOne({
+                            text: "INSERT INTO users (login, active, email, u_access, email_active) VALUES ($1, $2, $3, $4, $5) RETURNING id",
+                            values: [login, active, email, u_access, email_active]
+                        })];
+                    case 3:
+                        db_res = _a.sent();
+                        return [2, db_res.id];
+                    case 4: return [2, 0];
                 }
             });
         });

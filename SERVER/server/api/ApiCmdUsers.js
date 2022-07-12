@@ -126,6 +126,58 @@ function set_user_activation(api_obj) {
         });
     });
 }
+function test_user_double(api_obj) {
+    return __awaiter(this, void 0, void 0, function () {
+        var uid, login, ut, reti;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    uid = api_obj.args.id || 0;
+                    login = api_obj.args.login || '';
+                    if (uid === 0)
+                        return [2, true];
+                    if (login.trim() === '')
+                        return [2, true];
+                    ut = new UsersTable_1.UsersTable(api_obj.db_conn);
+                    return [4, ut.testDoubleLogin(uid, login)];
+                case 1:
+                    reti = _a.sent();
+                    api_obj.result.result = reti;
+                    return [2, reti];
+            }
+        });
+    });
+}
+function save_user(api_obj) {
+    return __awaiter(this, void 0, void 0, function () {
+        var uid, login, email, active, u_access, email_active, ut, ret_uid;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    uid = api_obj.args.id || 0;
+                    login = api_obj.args.login || '';
+                    email = api_obj.args.email || '';
+                    active = api_obj.args.active || false;
+                    u_access = api_obj.args.u_access || 10000;
+                    email_active = api_obj.args.email_active || false;
+                    api_obj.result.result = 0;
+                    if (login.trim().length < 6)
+                        return [2, false];
+                    ut = new UsersTable_1.UsersTable(api_obj.db_conn);
+                    return [4, ut.save_basic(uid, login, active, email, u_access, email_active)];
+                case 1:
+                    ret_uid = _a.sent();
+                    if (ret_uid > 0) {
+                        api_obj.result.result = ret_uid;
+                        api_obj.result.messages.push((0, Message_1.newMessage)(Message_1.MSG_TYPES.SUSSCESS, "Сохранение пользователя", "\u041F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C \"".concat(login, "\" \u0443\u0441\u043F\u0435\u0448\u043D\u043E \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D")));
+                        return [2, true];
+                    }
+                    api_obj.result.messages.push((0, Message_1.newMessage)(Message_1.MSG_TYPES.ERROR, "Сохранение пользователя", "Не могу сохранить пользователя"));
+                    return [2, false];
+            }
+        });
+    });
+}
 function ApiCmdUsers(api_obj) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -154,7 +206,19 @@ function ApiCmdUsers(api_obj) {
                 case 7:
                     _a.sent();
                     return [2, true];
-                case 8: return [2, false];
+                case 8:
+                    if (!(api_obj.cmd === 'test_user_double')) return [3, 10];
+                    return [4, test_user_double(api_obj)];
+                case 9:
+                    _a.sent();
+                    return [2, true];
+                case 10:
+                    if (!(api_obj.cmd === 'save_user')) return [3, 12];
+                    return [4, save_user(api_obj)];
+                case 11:
+                    _a.sent();
+                    return [2, true];
+                case 12: return [2, false];
             }
         });
     });

@@ -12,11 +12,11 @@ export class UserEntity extends BaseEntity{
     public password:string = '';
 	public u_access: number = 99999;
 	public user_data:Object = {};
-	public active:Boolean = false;
+	public active:boolean = false;
 	public activation_code:string = '';
 	public remember_code:string = '';
 	public email:string = '';
-	public email_active:Boolean = false;
+	public email_active:boolean = false;
 	public email_code:string = '';
 
 	constructor(db_conn:DBConnector, udt?:any){

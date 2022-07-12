@@ -1,4 +1,5 @@
 import { UserEntity } from './db_data/UserEntity';
+import { Message } from './msg_system/MsgSystem';
 
 
 /** Перевод объекта в строку для дальнейшей передачи данных */
@@ -38,7 +39,7 @@ export type ApiResult = {
     result: any,
     error:any,
     user:UserEntity,
-    messages: Array<any>
+    messages: Array<Message>
 }
 
 

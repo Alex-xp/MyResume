@@ -23,6 +23,7 @@ interface IProps {
     onEditUser: (u?:UserEntity)=>void
 }
 
+
 interface IState {}
 
 export class UsersActionPanel extends React.Component <IProps, IState> {
@@ -106,7 +107,7 @@ export class UsersActionPanel extends React.Component <IProps, IState> {
                     </Paper>
                 </Box>
 
-                <EditUserDialog ref={this.ref_edUserDlg} onEditUser={ (u)=>{ this.props.onEditUser(u) } } />
+                <EditUserDialog ref={this.ref_edUserDlg} onSaveUser={ (u)=>{ this.props.onEditUser(u) } } />
 
             </React.Fragment>
         );

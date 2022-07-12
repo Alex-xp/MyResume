@@ -14,7 +14,7 @@ export const MSG_TYPES = {
 /**
  * Системное сообщение
  */
-class Message extends React.Component{
+ export class Message extends React.Component{
 
     public msgType:string;
     public msgTitle:string;
@@ -136,6 +136,10 @@ export class MsgSystem extends React.Component {
         msg.msgTitle = msg_title;
         msg.msgText = msg_text;
         msgs.push(msg)
+        this.setState({messages:msgs});
+    }
+
+    public addMessages(msgs:Array<Message>){
         this.setState({messages:msgs});
     }
 

@@ -1,4 +1,3 @@
-import { UserEntity } from '../../db/entityes/UserEntity';
 /**
  * АВТОРЫ: 
  *      alex-xp@list.ru Сунегин Александр
@@ -6,6 +5,8 @@ import { UserEntity } from '../../db/entityes/UserEntity';
  * ОПИСАНИЕ:
  * Сушьность пользователя для возврата данных по API
  */
+
+ import { UserEntity } from '../../db/entityes/UserEntity';
 
 /**
  * КЛАСС С ОПИСАНИЕМ ВОЗВРАЩАЕМОГО ПОЛЬЗОВАТЕЛЯ
@@ -15,9 +16,9 @@ import { UserEntity } from '../../db/entityes/UserEntity';
     public id:number;
     public login:string;
     public email:string;
-    public active:Boolean;
+    public active:boolean;
     public u_access:number;
-    public email_active:Boolean;
+    public email_active:boolean;
     public activation_code:string;
     public remember_code:string;
     public email_code:string;
