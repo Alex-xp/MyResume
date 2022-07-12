@@ -117,10 +117,16 @@ export class EditUserDialog extends React.Component <IProps, IState> {
                             // СОХРАНЕНИЕ ПРОШЛО УДАЧНО
 
                             // проверим нужно ли сохранять пароль
-                            if(this.state.setPassword){
+                            if(isSetPassword){
                                 // УСТАНОВИМ ПОЛЬЗОВАТЕЛЮ НОВЫЙ ПАРОЛЬ
-                                this.props.onSaveUser(this.state.user);
-                                this.setState({ show: false });
+                                SendApi("set_password", {id:this.state.user.id, password:this.state.password1}, (res)=>{
+                                    this.context.msg_sys.addMessages(res.messages);
+                                    if(res.result){
+                                        this.props.onSaveUser(this.state.user);
+                                        this.setState({ show: false });
+                                    }
+                                    return true;
+                                }, (err)=>{ console.log(err); return true; });
                             }else{
                                 this.props.onSaveUser(this.state.user);
                                 this.setState({ show: false });

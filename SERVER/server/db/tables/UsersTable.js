@@ -185,6 +185,24 @@ var UsersTable = (function (_super) {
             });
         });
     };
+    UsersTable.prototype.set_password = function (uid, password) {
+        return __awaiter(this, void 0, void 0, function () {
+            var sha_passw;
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0:
+                        if (password.trim().length < 8)
+                            return [2, false];
+                        sha_passw = this.db_conn.sha256(password.trim());
+                        return [4, this.db_conn.Exec({
+                                text: "UPDATE users SET password=$1 WHERE id=$2",
+                                values: [sha_passw, uid]
+                            })];
+                    case 1: return [2, _a.sent()];
+                }
+            });
+        });
+    };
     return UsersTable;
 }(BaseTable_1.BaseTable));
 exports.UsersTable = UsersTable;

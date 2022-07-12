@@ -111,6 +111,16 @@ export class UsersTable extends BaseTable{
         return false;
     }
 
+    /**
+     * Базовое сохранение пользователя (применимо для создания и сохранения базовых значений о пользователе)
+     * @param uid 
+     * @param login 
+     * @param active 
+     * @param email 
+     * @param u_access 
+     * @param email_active 
+     * @returns 
+     */
     public async save_basic(uid:number, login:string, active:boolean, email:string, u_access:number, email_active:boolean):Promise<number>{
         if(uid>0){
             // СОХРАНЕНИЕ СУЩЕСТВУЮЩЕГО ПОЛЬЗОВАТЕЛЯ
@@ -131,6 +141,17 @@ export class UsersTable extends BaseTable{
         }
         
         return 0;
+    }
+
+    public async set_password(uid:number, password:string):Promise<boolean>{
+        if(password.trim().length < 8) return false;
+
+        var sha_passw = this.db_conn.sha256(password.trim());
+
+        return await this.db_conn.Exec({
+            text: "UPDATE users SET password=$1 WHERE id=$2",
+            values: [sha_passw,  uid]
+        });
     }
 
     /*

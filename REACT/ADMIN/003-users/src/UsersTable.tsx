@@ -57,6 +57,14 @@ export class UsersTable extends React.Component <IProps, IState> {
         var usStyle = { flexWrap:1, fontWeight: 'normal' };
         if(this.state.u_selected !== null && this.state.u_selected.id === ue.id) usStyle = { flexWrap:1, fontWeight: 'bold' };
 
+        var access_text = "";
+        
+        if(ue.u_access < 10001) access_text = "Пользователь";
+        if(ue.u_access < 1001) access_text = "Продвинутый пользователь";
+        if(ue.u_access < 501) access_text = "Модератор";
+        if(ue.u_access < 101) access_text = "Администратор";
+        if(ue.u_access < 5) access_text = "Разработчик";
+
         return (
             <React.Fragment key={"uid_"+ue.id}>
                 <TableRow>
@@ -74,7 +82,7 @@ export class UsersTable extends React.Component <IProps, IState> {
 
                     <TableCell>
                         <a href="" style={{color:"#222", textDecoration:"none"}} onClick={(e)=>{ e.preventDefault(); this.on_selectUser(ue); }}>
-                            <Typography sx={usStyle}>{ue.u_access}</Typography>
+                            <Typography sx={usStyle}>{access_text}</Typography>
                         </a>
                     </TableCell>
 

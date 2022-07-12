@@ -178,6 +178,34 @@ function save_user(api_obj) {
         });
     });
 }
+function set_password(api_obj) {
+    return __awaiter(this, void 0, void 0, function () {
+        var uid, password, ut, q_ret;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    uid = api_obj.args.id || 0;
+                    password = api_obj.args.password || '';
+                    if (uid === 0 && password.trim() === '') {
+                        api_obj.result.messages.push((0, Message_1.newMessage)(Message_1.MSG_TYPES.ERROR, "Изменение пароля", "Не верно передан пользователь или пароль"));
+                        return [2, false];
+                    }
+                    ut = new UsersTable_1.UsersTable(api_obj.db_conn);
+                    return [4, ut.set_password(uid, password)];
+                case 1:
+                    q_ret = _a.sent();
+                    api_obj.result.result = q_ret;
+                    if (q_ret) {
+                        api_obj.result.messages.push((0, Message_1.newMessage)(Message_1.MSG_TYPES.SUSSCESS, "Изменение пароля", "\u041D\u043E\u0432\u044B\u0439 \u043F\u0430\u0440\u043E\u043B\u044C \u0443\u0441\u043F\u0435\u0448\u043D\u043E \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D"));
+                    }
+                    else {
+                        api_obj.result.messages.push((0, Message_1.newMessage)(Message_1.MSG_TYPES.ERROR, "Изменение пароля", "Не могу сохранить пароль"));
+                    }
+                    return [2, q_ret];
+            }
+        });
+    });
+}
 function ApiCmdUsers(api_obj) {
     return __awaiter(this, void 0, void 0, function () {
         return __generator(this, function (_a) {
@@ -218,7 +246,13 @@ function ApiCmdUsers(api_obj) {
                 case 11:
                     _a.sent();
                     return [2, true];
-                case 12: return [2, false];
+                case 12:
+                    if (!(api_obj.cmd === 'set_password')) return [3, 14];
+                    return [4, set_password(api_obj)];
+                case 13:
+                    _a.sent();
+                    return [2, true];
+                case 14: return [2, false];
             }
         });
     });

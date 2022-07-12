@@ -112,7 +112,11 @@ async function test_user_double(api_obj:ApiObject):Promise<boolean>{
 
 
 
-
+/**
+ * Базовое сохранение пользователя (применимо для создания и сохранения базовых значений о пользователе)
+ * @param api_obj api_obj.args => { id:user_id, login:string, email:string, active:boolean, u_access:number, email_active:boolean }
+ * @returns 
+ */
 async function save_user(api_obj:ApiObject):Promise<boolean>{
 
     var uid:number = api_obj.args.id || 0;
@@ -141,6 +145,31 @@ async function save_user(api_obj:ApiObject):Promise<boolean>{
     return false;
 }
 
+/**
+ * Изменение пароля пользователя
+ * @param api_obj api_obj.args => { id:user_id, password:string }
+ * @returns 
+ */
+async function set_password(api_obj:ApiObject):Promise<boolean>{
+    var uid:number = api_obj.args.id || 0;
+    var password:string = api_obj.args.password || '';
+
+    if(uid===0 && password.trim() === ''){
+        api_obj.result.messages.push(newMessage(MSG_TYPES.ERROR, "Изменение пароля", "Не верно передан пользователь или пароль"))
+        return false;
+    }
+
+    var ut:UsersTable = new UsersTable(api_obj.db_conn);
+    var q_ret = await ut.set_password(uid, password);
+    api_obj.result.result = q_ret;
+    if(q_ret){
+        api_obj.result.messages.push(newMessage(MSG_TYPES.SUSSCESS, "Изменение пароля", `Новый пароль успешно сохранен`));
+    }else{
+        api_obj.result.messages.push(newMessage(MSG_TYPES.ERROR, "Изменение пароля", "Не могу сохранить пароль"))
+    }
+
+    return q_ret;
+}
 
 
 
@@ -162,6 +191,8 @@ export async function ApiCmdUsers(api_obj:ApiObject):Promise<Boolean>{
     if(api_obj.cmd === 'test_user_double'){ await test_user_double(api_obj); return true; }
 
     if(api_obj.cmd === 'save_user'){ await save_user(api_obj); return true; }
+
+    if(api_obj.cmd === 'set_password'){ await set_password(api_obj); return true; }
 
 
     return false;

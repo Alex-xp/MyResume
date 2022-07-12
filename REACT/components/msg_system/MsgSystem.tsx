@@ -121,6 +121,15 @@ export class MsgSystem extends React.Component {
         super(props);
     }
 
+    private __addMSG(msgs:Message[], msg_type:string, msg_title:string, msg_text:string):Message[]{
+        var msg = new Message(null);
+        msg.msgType = msg_type;
+        msg.msgTitle = msg_title;
+        msg.msgText = msg_text;
+        msgs.push(msg)
+        return msgs;
+    }
+
     /**
      * Добавить новое системное сообщение
      * @param msg_type Тип сообщения из MSG_TYPES
@@ -131,15 +140,13 @@ export class MsgSystem extends React.Component {
      */
     public addMessage(msg_type:string, msg_title:string, msg_text:string){
         var msgs = this.state.messages;
-        var msg = new Message(null);
-        msg.msgType = msg_type;
-        msg.msgTitle = msg_title;
-        msg.msgText = msg_text;
-        msgs.push(msg)
+        msgs = this.__addMSG(msgs, msg_type, msg_title, msg_text);
         this.setState({messages:msgs});
     }
 
-    public addMessages(msgs:Array<Message>){
+    public addMessages(in_msgs:Array<Message>){
+        var msgs = this.state.messages;
+        for(var ii in in_msgs)msgs = this.__addMSG(msgs, in_msgs[ii].msgType, in_msgs[ii].msgTitle, in_msgs[ii].msgText);
         this.setState({messages:msgs});
     }
 
