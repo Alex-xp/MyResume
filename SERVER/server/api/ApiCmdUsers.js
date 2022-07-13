@@ -54,7 +54,7 @@ function cmd_login(api_obj) {
                         return [2];
                     }
                     ut = new UsersTable_1.UsersTable(api_obj.db_conn);
-                    return [4, ut.getUserByLogin(login, password)];
+                    return [4, ut.getUserByAuth(login, password)];
                 case 1:
                     ue = _a.sent();
                     if (ue === null) {
@@ -81,28 +81,33 @@ function cmd_login(api_obj) {
 }
 function cmd_logout(api_obj) {
     return __awaiter(this, void 0, void 0, function () {
+        var sess_id, ust;
         return __generator(this, function (_a) {
-            api_obj.res.cookie('key01', "", { expires: new Date(Date.now() - 100), httpOnly: true, path: '/', secure: true });
-            api_obj.res.cookie('key02', "", { expires: new Date(Date.now() - 100), httpOnly: true, path: '/', secure: true });
-            api_obj.res.cookie('key03', "", { expires: new Date(Date.now() - 100), httpOnly: true, path: '/', secure: true });
-            return [2];
+            switch (_a.label) {
+                case 0:
+                    sess_id = api_obj.req.cookies["key01"] || 0;
+                    ust = new UsersSessionsTable_1.UsersSessionsTable(api_obj.db_conn);
+                    return [4, ust["delete"](sess_id)];
+                case 1:
+                    _a.sent();
+                    api_obj.res.cookie('key01', "", { expires: new Date(Date.now() - 100), httpOnly: true, path: '/', secure: true });
+                    api_obj.res.cookie('key02', "", { expires: new Date(Date.now() - 100), httpOnly: true, path: '/', secure: true });
+                    api_obj.res.cookie('key03', "", { expires: new Date(Date.now() - 100), httpOnly: true, path: '/', secure: true });
+                    return [2];
+            }
         });
     });
 }
-function cmd_find_users(api_obj) {
+function find_users(api_obj) {
     return __awaiter(this, void 0, void 0, function () {
-        var search_txt, reti, ut, users_db, ue_ii;
+        var search_txt, reti;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     search_txt = api_obj.args.login || '';
-                    reti = [];
-                    ut = new UsersTable_1.UsersTable(api_obj.db_conn);
-                    return [4, ut.findUsers(search_txt)];
+                    return [4, api_obj.db_conn.Query({ text: 'SELECT * FROM find_users($1)', values: [search_txt] })];
                 case 1:
-                    users_db = _a.sent();
-                    for (ue_ii in users_db)
-                        reti.push((0, ApiUserEntity_1.getUserApi)(users_db[ue_ii]));
+                    reti = _a.sent();
                     api_obj.result.result = reti;
                     return [2];
             }
@@ -111,7 +116,7 @@ function cmd_find_users(api_obj) {
 }
 function set_user_activation(api_obj) {
     return __awaiter(this, void 0, void 0, function () {
-        var uid, act, ut;
+        var uid, act;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -119,8 +124,7 @@ function set_user_activation(api_obj) {
                     act = api_obj.args.active || false;
                     if (uid === 0)
                         return [2];
-                    ut = new UsersTable_1.UsersTable(api_obj.db_conn);
-                    return [4, ut.setUserActive(uid, act)];
+                    return [4, api_obj.db_conn.Exec({ text: 'UPDATE users SET active=$1 WHERE id=$2', values: [act, uid] })];
                 case 1: return [2, _a.sent()];
             }
         });
@@ -128,22 +132,29 @@ function set_user_activation(api_obj) {
 }
 function test_user_double(api_obj) {
     return __awaiter(this, void 0, void 0, function () {
-        var uid, login, ut, reti;
+        var uid, login, db_res;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     uid = api_obj.args.id || 0;
                     login = api_obj.args.login || '';
-                    if (uid === 0)
+                    if (uid === 0) {
+                        api_obj.result.result = true;
                         return [2, true];
-                    if (login.trim() === '')
+                    }
+                    if (login.trim() === '') {
+                        api_obj.result.result = true;
                         return [2, true];
-                    ut = new UsersTable_1.UsersTable(api_obj.db_conn);
-                    return [4, ut.testDoubleLogin(uid, login)];
+                    }
+                    return [4, api_obj.db_conn.Query({ text: "SELECT * FROM users WHERE id<>$1 AND login=$2", values: [uid, login] })];
                 case 1:
-                    reti = _a.sent();
-                    api_obj.result.result = reti;
-                    return [2, reti];
+                    db_res = _a.sent();
+                    if (db_res.length > 0) {
+                        api_obj.result.result = true;
+                        return [2, true];
+                    }
+                    api_obj.result.result = false;
+                    return [2, false];
             }
         });
     });
@@ -224,7 +235,7 @@ function ApiCmdUsers(api_obj) {
                     return [2, true];
                 case 4:
                     if (!(api_obj.cmd === 'find_users')) return [3, 6];
-                    return [4, cmd_find_users(api_obj)];
+                    return [4, find_users(api_obj)];
                 case 5:
                     _a.sent();
                     return [2, true];

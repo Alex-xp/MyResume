@@ -25,7 +25,7 @@ async function cmd_login(api_obj:ApiObject):Promise<void>{
         return;
     }
     var ut = new UsersTable(api_obj.db_conn);
-    var ue:UserEntity = await ut.getUserByLogin(login, password);
+    var ue:UserEntity = await ut.getUserByAuth(login, password);
     if(ue===null){
         api_obj.result.messages.push(newMessage(MSG_TYPES.ERROR, "Авторизация", "Не совпадают логин и пароль пользователя."));
         return;
@@ -50,9 +50,15 @@ async function cmd_login(api_obj:ApiObject):Promise<void>{
 }
 
 async function cmd_logout(api_obj:ApiObject):Promise<void>{
+    
+    var sess_id = api_obj.req.cookies["key01"] || 0;
+    var ust = new UsersSessionsTable(api_obj.db_conn);
+    await ust.delete(sess_id);
+
     api_obj.res.cookie('key01', "", {expires: new Date(Date.now() - 100), httpOnly: true, path: '/', secure: true});
     api_obj.res.cookie('key02', "", {expires: new Date(Date.now() - 100), httpOnly: true, path: '/', secure: true});
     api_obj.res.cookie('key03', "", {expires: new Date(Date.now() - 100), httpOnly: true, path: '/', secure: true});
+
     return;
 }
 
@@ -61,19 +67,10 @@ async function cmd_logout(api_obj:ApiObject):Promise<void>{
  * @param api_obj api_obj.args => { search_txt: login_search_text }
  * @returns 
  */
-async function cmd_find_users(api_obj:ApiObject):Promise<void>{
-
+async function find_users(api_obj:ApiObject):Promise<void>{
     var search_txt:string = api_obj.args.login || '';
-
-    var reti:Array<ApiUserEntity> = [];
-
-    var ut:UsersTable = new UsersTable(api_obj.db_conn);
-    var users_db:Array<UserEntity> = await ut.findUsers(search_txt);
-    
-    for(var ue_ii in users_db) reti.push(getUserApi(users_db[ue_ii]));
-
+    var reti:Array<UserEntity> = await api_obj.db_conn.Query({ text:'SELECT * FROM find_users($1)', values: [search_txt] });
     api_obj.result.result = reti;
-
     return;
 }
 
@@ -85,29 +82,29 @@ async function cmd_find_users(api_obj:ApiObject):Promise<void>{
 async function set_user_activation(api_obj:ApiObject):Promise<boolean>{
     var uid:number = api_obj.args.id || 0;
     var act:boolean = api_obj.args.active || false;
-    if(uid===0)return;
-
-    var ut:UsersTable = new UsersTable(api_obj.db_conn);
-    return await ut.setUserActive(uid, act);
+    if(uid===0) return;
+    return await api_obj.db_conn.Exec({ text:'UPDATE users SET active=$1 WHERE id=$2', values: [act, uid] });
 }
 
 
 /**
  * Проверка двойных логинов
  * @param api_obj api_obj.args => { id:user_id, login:string }
- * @returns 
+ * @returns true - возможны двойные логины
  */
 async function test_user_double(api_obj:ApiObject):Promise<boolean>{
 
     var uid:number = api_obj.args.id || 0;
     var login:string = api_obj.args.login || '';
-    if(uid===0) return true;
-    if(login.trim() === '') return true;
+    if(uid===0) {api_obj.result.result = true; return true;} // не передан uid
+    if(login.trim() === '') {api_obj.result.result = true; return true;} // не передан логин
 
-    var ut:UsersTable = new UsersTable(api_obj.db_conn);
-    var reti:boolean = await ut.testDoubleLogin(uid, login);
-    api_obj.result.result = reti;
-    return reti;
+    var db_res = await api_obj.db_conn.Query({ text:"SELECT * FROM users WHERE id<>$1 AND login=$2",  values: [uid, login] });
+
+    if(db_res.length > 0) {api_obj.result.result = true; return true;} // существует в базе
+
+    api_obj.result.result = false; 
+    return false;
 }
 
 
@@ -184,7 +181,7 @@ export async function ApiCmdUsers(api_obj:ApiObject):Promise<Boolean>{
     if(api_obj.cmd === 'login'){ await cmd_login(api_obj); return true; }
     if(api_obj.cmd === 'logout'){ await cmd_logout(api_obj); return true; }
 
-    if(api_obj.cmd === 'find_users'){ await cmd_find_users(api_obj); return true; }
+    if(api_obj.cmd === 'find_users'){ await find_users(api_obj); return true; }
     
     if(api_obj.cmd === 'set_user_activation'){ await set_user_activation(api_obj); return true; }
 

@@ -34,9 +34,9 @@ async function _getSession(db_conn:DBConnector, sess_id:number, uid_key:string, 
  */
 async function _updateSession(sess:UserSessionEntity, res:express.Response, sess_id:number, uid_key:string, sess_key:string) {
     var exp = new Date(Date.now() + 3600 * 24 * 15 * 1000);
-    res.cookie("key01", sess_id, {expires: exp, httpOnly: true, path: '', secure: true});
-    res.cookie("key02", uid_key, {expires: exp, httpOnly: true, path: '', secure: true});
-    res.cookie("key03", sess_key, {expires: exp, httpOnly: true, path: '', secure: true});
+    res.cookie("key01", sess_id, {expires: exp, httpOnly: true, path: '/', secure: true});
+    res.cookie("key02", uid_key, {expires: exp, httpOnly: true, path: '/', secure: true});
+    res.cookie("key03", sess_key, {expires: exp, httpOnly: true, path: '/', secure: true});
 
     await sess.updateExpires(exp);
 }
@@ -46,10 +46,10 @@ async function _updateSession(sess:UserSessionEntity, res:express.Response, sess
  * @param res 
  */
 function _clearSession(res:express.Response) {
-    var exp = new Date(Date.now() -100);
-    res.cookie("key01", "", {expires: exp, httpOnly: true, path: '', secure: true});
-    res.cookie("key02", "", {expires: exp, httpOnly: true, path: '', secure: true});
-    res.cookie("key03", "", {expires: exp, httpOnly: true, path: '', secure: true});
+    var exp = new Date(Date.now() - 1000);
+    res.cookie("key01", "", {expires: exp, httpOnly: true, path: '/', secure: true});
+    res.cookie("key02", "", {expires: exp, httpOnly: true, path: '/', secure: true});
+    res.cookie("key03", "", {expires: exp, httpOnly: true, path: '/', secure: true});
 }
 
 
@@ -64,6 +64,7 @@ export async function getCurrentUser(req: express.Request, res: express.Response
     var reti:UserEntity = new UserEntity(db_conn);
 
     // Проверим наличие ключей сессии
+    req.cookies
     var key01 = req.cookies["key01"] || null; // id сессии
     var key02 = req.cookies["key02"] || null; // sha256(user.id)
     var key03 = req.cookies["key03"] || null; // sess_key из таблицы users_sessions sha256(session.id + "-" + user.id)

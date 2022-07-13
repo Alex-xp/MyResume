@@ -1,3 +1,4 @@
+
 -- создаем таблицу пользователей
 DROP TABLE IF EXISTS users;
 CREATE TABLE users
@@ -12,14 +13,15 @@ CREATE TABLE users
 	"remember_code" CHARACTER VARYING(200) NOT NULL DEFAULT(''),
 	"email" CHARACTER VARYING(200) NOT NULL DEFAULT(''),
 	"email_active" BOOLEAN NOT NULL DEFAULT(FALSE),
-	"email_code" CHARACTER VARYING(200) NOT NULL DEFAULT('')
+	"email_code" CHARACTER VARYING(200) NOT NULL DEFAULT(''),
+	"group_id" BIGINT NOT NULL DEFAULT(3)
 );
 
 -- комментируем
 COMMENT ON TABLE users IS 'пользователи системы';
 COMMENT ON COLUMN users.login IS 'Логин';
 COMMENT ON COLUMN users.password IS 'Пароль';
-COMMENT ON COLUMN users.u_access IS 'Доступ по уровням (0 - супер админ; 10 - админ; 1000 - пользователь; 10000 - гость)';
+COMMENT ON COLUMN users.u_access IS 'Доступ по уровням (0 - разработчик; 100 - админ; 500 - модератор; 1000 - продвинутый пользователь; 10000 - пользователь; 99999 - гость)';
 COMMENT ON COLUMN users.user_data IS 'Дополнительные данные пользователя в формате json';
 COMMENT ON COLUMN users.active IS 'Активированность пользователя';
 COMMENT ON COLUMN users.activation_code IS 'Код активации пользователя';
@@ -27,3 +29,8 @@ COMMENT ON COLUMN users.remember_code IS 'Напоминание пароля';
 COMMENT ON COLUMN users.email IS 'email пользователя';
 COMMENT ON COLUMN users.email_active IS 'Активность email';
 COMMENT ON COLUMN users.email_code IS 'Код активации email';
+COMMENT ON COLUMN users.group_id IS 'Идентификатор группы';
+
+
+
+

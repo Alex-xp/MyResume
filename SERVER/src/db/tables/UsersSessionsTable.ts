@@ -20,6 +20,13 @@ export class UsersSessionsTable extends BaseTable{
         });
     }
 
+    async delete(sid:number):Promise<boolean>{
+        return await this.db_conn.Exec({
+            text: "DELETE FROM users_sessions WHERE id=$1",
+            values: [ sid ]
+        });
+    }
+
     /**
      * Получить сессию пользователя по ид_сессии, sha256(ид_пользователя) и sha256(ид_сессии + "-" + ид_пользователя")
      * @param sess_id 

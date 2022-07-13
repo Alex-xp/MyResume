@@ -72,6 +72,19 @@ var UsersSessionsTable = (function (_super) {
             });
         });
     };
+    UsersSessionsTable.prototype["delete"] = function (sid) {
+        return __awaiter(this, void 0, void 0, function () {
+            return __generator(this, function (_a) {
+                switch (_a.label) {
+                    case 0: return [4, this.db_conn.Exec({
+                            text: "DELETE FROM users_sessions WHERE id=$1",
+                            values: [sid]
+                        })];
+                    case 1: return [2, _a.sent()];
+                }
+            });
+        });
+    };
     UsersSessionsTable.prototype.getSession = function (sess_id, uid_key, sess_key) {
         return __awaiter(this, void 0, void 0, function () {
             var s_res, reti;

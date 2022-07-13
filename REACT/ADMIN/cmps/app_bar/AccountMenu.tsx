@@ -1,3 +1,11 @@
+/**
+ * АВТОРЫ: 
+ *      alex-xp@list.ru Сунегин Александр
+ * 
+ * ОПИСАНИЕ:
+ * Верхняя панель приложения - аккаунт пользователя
+ */
+
 import React from 'react';
 
 import { IconButton, Typography, Menu, MenuItem } from '@mui/material';
@@ -46,7 +54,16 @@ export class AccountMenu extends React.Component <IProps, IState>{
                 </IconButton>
                 {/* выпадающее меню */}
                 <Menu open={this.state.showMenu} anchorEl={this.state.m_anchor} keepMounted onClose={()=>{ this.setState({showMenu:false})  }}>
-                    <MenuItem onClick={()=>{SendApi("logout", {}, (res)=>{ window.location.href = '/admin'; return true; })}}>Выход</MenuItem>
+                    <MenuItem onClick={ ()=>{
+                        
+                        SendApi("logout", {}, (res)=>{
+                            setTimeout(()=>{ window.location.href='/admin';  }, 200);
+                            return true; 
+                        })
+                        
+                        
+
+                    } }>Выход</MenuItem>
                 </Menu>
                 {/* ------------------------------------------------------------------------- */}
             </React.Fragment>

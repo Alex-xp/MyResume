@@ -76,6 +76,7 @@ export class App extends React.Component <IProps, IState> {
     searchUsers(s_login:string){
         SendApi('find_users', {login:s_login}, (res)=>{ 
             this.setState({users_list:res.result, search_login:s_login, selected_user: null}); 
+            //console.log(res.result);
             return true; 
         }, (err)=>{ return true; });
     }

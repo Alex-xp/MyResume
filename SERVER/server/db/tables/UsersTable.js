@@ -61,7 +61,7 @@ var UsersTable = (function (_super) {
     }
     UsersTable.prototype.getUserById = function (user_id) {
         return __awaiter(this, void 0, void 0, function () {
-            var u, reti;
+            var u;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4, this.db_conn.QueryOne({
@@ -72,30 +72,18 @@ var UsersTable = (function (_super) {
                         u = _a.sent();
                         if (u === null)
                             return [2, null];
-                        reti = new UserEntity_1.UserEntity(this.db_conn);
-                        reti.id = u.id;
-                        reti.login = u.login;
-                        reti.password = u.password;
-                        reti.u_access = u.u_access;
-                        reti.user_data = u.user_data;
-                        reti.active = u.active;
-                        reti.activation_code = u.activation_code;
-                        reti.remember_code = u.remember_code;
-                        reti.email = u.email;
-                        reti.email_active = u.email_active;
-                        reti.email_code = u.email_code;
-                        return [2, reti];
+                        return [2, new UserEntity_1.UserEntity(this.db_conn, u)];
                 }
             });
         });
     };
-    UsersTable.prototype.getUserByLogin = function (login, password) {
+    UsersTable.prototype.getUserByAuth = function (login, password) {
         return __awaiter(this, void 0, void 0, function () {
             var db_res;
             return __generator(this, function (_a) {
                 switch (_a.label) {
                     case 0: return [4, this.db_conn.QueryOne({
-                            text: "SELECT * FROM users WHERE login=$1 AND password=$2",
+                            text: "SELECT * FROM get_user_auth($1, $2)",
                             values: [login, this.db_conn.sha256(password)]
                         })];
                     case 1:
@@ -104,56 +92,6 @@ var UsersTable = (function (_super) {
                             return [2, null];
                         }
                         return [2, new UserEntity_1.UserEntity(this.db_conn, db_res)];
-                }
-            });
-        });
-    };
-    UsersTable.prototype.findUsers = function (s_login) {
-        return __awaiter(this, void 0, void 0, function () {
-            var reti;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4, this.db_conn.Query({
-                            text: 'SELECT * FROM users WHERE login LIKE $1 ORDER BY active DESC, u_access ASC, login ASC LIMIT 1000',
-                            values: ['%' + s_login + '%']
-                        })];
-                    case 1:
-                        reti = _a.sent();
-                        return [2, reti];
-                }
-            });
-        });
-    };
-    UsersTable.prototype.setUserActive = function (uid, active) {
-        return __awaiter(this, void 0, void 0, function () {
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0: return [4, this.db_conn.Exec({
-                            text: 'UPDATE users SET active=$1 WHERE id=$2',
-                            values: [active, uid]
-                        })];
-                    case 1: return [2, _a.sent()];
-                }
-            });
-        });
-    };
-    UsersTable.prototype.testDoubleLogin = function (uid, login) {
-        return __awaiter(this, void 0, void 0, function () {
-            var db_res;
-            return __generator(this, function (_a) {
-                switch (_a.label) {
-                    case 0:
-                        if (login.trim().length < 1)
-                            return [2, true];
-                        return [4, this.db_conn.Query({
-                                text: "SELECT 8 FROM users WHERE id<>$1 AND login=$2",
-                                values: [uid, login]
-                            })];
-                    case 1:
-                        db_res = _a.sent();
-                        if (db_res.length > 0)
-                            return [2, true];
-                        return [2, false];
                 }
             });
         });

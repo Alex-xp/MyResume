@@ -54,8 +54,8 @@ export class UsersTable extends React.Component <IProps, IState> {
         var email_active = (<Typography component='span' sx={{color:'#880000'}}>НЕ АКТИВЕН</Typography>);
         if(ue.email_active) email_active = (<Typography component='span' sx={{color:'#008800'}}>АКТИВЕН</Typography>);
 
-        var usStyle = { flexWrap:1, fontWeight: 'normal' };
-        if(this.state.u_selected !== null && this.state.u_selected.id === ue.id) usStyle = { flexWrap:1, fontWeight: 'bold' };
+        var usStyle = { flexWrap:1, fontWeight: 'normal', backgroundColor:"#fff" };
+        if(this.state.u_selected !== null && this.state.u_selected.id === ue.id) usStyle = { flexWrap:1, fontWeight: 'bold', backgroundColor:"#ddd" };
 
         var access_text = "";
         
@@ -65,40 +65,42 @@ export class UsersTable extends React.Component <IProps, IState> {
         if(ue.u_access < 101) access_text = "Администратор";
         if(ue.u_access < 5) access_text = "Разработчик";
 
+        //console.log(ue);
+
         return (
             <React.Fragment key={"uid_"+ue.id}>
-                <TableRow>
-                    <TableCell>
+                <TableRow sx={usStyle}>
+                    <TableCell sx={usStyle}>
                         <a href="" style={{color:"#222", textDecoration:"none"}} onClick={(e)=>{ e.preventDefault(); this.on_selectUser(ue); }}>
                             <Typography sx={usStyle}>{ue.id}</Typography>
                         </a>
                     </TableCell>
 
-                    <TableCell>
+                    <TableCell sx={usStyle}>
                         <a href="" style={{color:"#222", textDecoration:"none"}} onClick={(e)=>{ e.preventDefault(); this.on_selectUser(ue); }}>
                             <Typography sx={usStyle}>{ue.login}</Typography>
                         </a>
                     </TableCell>
 
-                    <TableCell>
+                    <TableCell sx={usStyle}>
                         <a href="" style={{color:"#222", textDecoration:"none"}} onClick={(e)=>{ e.preventDefault(); this.on_selectUser(ue); }}>
                             <Typography sx={usStyle}>{access_text}</Typography>
                         </a>
                     </TableCell>
 
-                    <TableCell>
+                    <TableCell sx={usStyle}>
                         <a href="" style={{color:"#222", textDecoration:"none"}} onClick={(e)=>{ e.preventDefault(); this.on_selectUser(ue); }}>
                             <Typography sx={usStyle}>{ue.email}</Typography>
                         </a>
                     </TableCell>
 
-                    <TableCell>
+                    <TableCell sx={usStyle}>
                         <a href="" style={{color:"#222", textDecoration:"none"}} onClick={(e)=>{ e.preventDefault(); this.on_selectUser(ue); }}>
                             <Typography sx={usStyle}>{user_active}</Typography>
                         </a>
                     </TableCell>
 
-                    <TableCell>
+                    <TableCell sx={usStyle}>
                         <a href="" style={{color:"#222", textDecoration:"none"}} onClick={(e)=>{ e.preventDefault(); this.on_selectUser(ue); }}>
                             <Typography sx={usStyle}>{email_active}</Typography>
                         </a>

@@ -65,9 +65,9 @@ function _updateSession(sess, res, sess_id, uid_key, sess_key) {
             switch (_a.label) {
                 case 0:
                     exp = new Date(Date.now() + 3600 * 24 * 15 * 1000);
-                    res.cookie("key01", sess_id, { expires: exp, httpOnly: true, path: '', secure: true });
-                    res.cookie("key02", uid_key, { expires: exp, httpOnly: true, path: '', secure: true });
-                    res.cookie("key03", sess_key, { expires: exp, httpOnly: true, path: '', secure: true });
+                    res.cookie("key01", sess_id, { expires: exp, httpOnly: true, path: '/', secure: true });
+                    res.cookie("key02", uid_key, { expires: exp, httpOnly: true, path: '/', secure: true });
+                    res.cookie("key03", sess_key, { expires: exp, httpOnly: true, path: '/', secure: true });
                     return [4, sess.updateExpires(exp)];
                 case 1:
                     _a.sent();
@@ -77,10 +77,10 @@ function _updateSession(sess, res, sess_id, uid_key, sess_key) {
     });
 }
 function _clearSession(res) {
-    var exp = new Date(Date.now() - 100);
-    res.cookie("key01", "", { expires: exp, httpOnly: true, path: '', secure: true });
-    res.cookie("key02", "", { expires: exp, httpOnly: true, path: '', secure: true });
-    res.cookie("key03", "", { expires: exp, httpOnly: true, path: '', secure: true });
+    var exp = new Date(Date.now() - 1000);
+    res.cookie("key01", "", { expires: exp, httpOnly: true, path: '/', secure: true });
+    res.cookie("key02", "", { expires: exp, httpOnly: true, path: '/', secure: true });
+    res.cookie("key03", "", { expires: exp, httpOnly: true, path: '/', secure: true });
 }
 function getCurrentUser(req, res, db_conn) {
     return __awaiter(this, void 0, void 0, function () {
@@ -89,6 +89,7 @@ function getCurrentUser(req, res, db_conn) {
             switch (_a.label) {
                 case 0:
                     reti = new UserEntity_1.UserEntity(db_conn);
+                    req.cookies;
                     key01 = req.cookies["key01"] || null;
                     key02 = req.cookies["key02"] || null;
                     key03 = req.cookies["key03"] || null;
