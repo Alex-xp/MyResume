@@ -37,7 +37,6 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 };
 exports.__esModule = true;
 exports.getCurrentUser = void 0;
-var UsersTable_1 = require("./tables/UsersTable");
 var UserEntity_1 = require("./entityes/UserEntity");
 var UsersSessionsTable_1 = require("./tables/UsersSessionsTable");
 function _getSession(db_conn, sess_id, uid_key, sess_key) {
@@ -84,7 +83,7 @@ function _clearSession(res) {
 }
 function getCurrentUser(req, res, db_conn) {
     return __awaiter(this, void 0, void 0, function () {
-        var reti, key01, key02, key03, sess, user_id, ut, user;
+        var reti, key01, key02, key03, sess, user_id, user, u;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -98,10 +97,12 @@ function getCurrentUser(req, res, db_conn) {
                     sess = _a.sent();
                     if (!(sess !== null)) return [3, 4];
                     user_id = sess.uid;
-                    ut = new UsersTable_1.UsersTable(db_conn);
-                    return [4, ut.getUserById(user_id)];
+                    user = null;
+                    return [4, db_conn.QueryOne({ text: "SELECT * FROM users WHERE id=$1", values: [user_id] })];
                 case 2:
-                    user = _a.sent();
+                    u = _a.sent();
+                    if (u !== null)
+                        user = new UserEntity_1.UserEntity(db_conn, u);
                     if (user === null) {
                         _clearSession(res);
                         return [2, reti];

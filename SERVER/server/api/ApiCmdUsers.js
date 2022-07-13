@@ -38,12 +38,12 @@ var __generator = (this && this.__generator) || function (thisArg, body) {
 exports.__esModule = true;
 exports.ApiCmdUsers = void 0;
 var Message_1 = require("../api/Message");
-var UsersTable_1 = require("../db/tables/UsersTable");
+var UserEntity_1 = require("../db/entityes/UserEntity");
 var ApiUserEntity_1 = require("./entityes/ApiUserEntity");
 var UsersSessionsTable_1 = require("../db/tables/UsersSessionsTable");
 function cmd_login(api_obj) {
     return __awaiter(this, void 0, void 0, function () {
-        var login, password, ut, ue, ut_sess, sess;
+        var login, password, db_res, ue, ut_sess, sess;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
@@ -53,10 +53,10 @@ function cmd_login(api_obj) {
                         api_obj.result.error = "\u0412 \u041A\u041E\u041C\u0410\u041D\u0414\u0415 \"".concat(api_obj.cmd, "\" \u041D\u0415 \u0414\u041E\u0421\u0422\u0410\u0422\u041E\u0427\u041D\u041E \u0410\u0420\u0413\u0423\u041C\u0415\u041D\u0422\u041E\u0412");
                         return [2];
                     }
-                    ut = new UsersTable_1.UsersTable(api_obj.db_conn);
-                    return [4, ut.getUserByAuth(login, password)];
+                    return [4, api_obj.db_conn.QueryOne({ text: "SELECT * FROM get_user_auth($1, $2)", values: [login, api_obj.db_conn.sha256(password)] })];
                 case 1:
-                    ue = _a.sent();
+                    db_res = _a.sent();
+                    ue = new UserEntity_1.UserEntity(api_obj.db_conn, db_res);
                     if (ue === null) {
                         api_obj.result.messages.push((0, Message_1.newMessage)(Message_1.MSG_TYPES.ERROR, "Авторизация", "Не совпадают логин и пароль пользователя."));
                         return [2];
@@ -161,28 +161,43 @@ function test_user_double(api_obj) {
 }
 function save_user(api_obj) {
     return __awaiter(this, void 0, void 0, function () {
-        var uid, login, email, active, u_access, email_active, ut, ret_uid;
+        var uid, login, email, active, u_access, email_active, ret_uid, db_res;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     uid = api_obj.args.id || 0;
                     login = api_obj.args.login || '';
+                    login = login.trim();
                     email = api_obj.args.email || '';
+                    email = email.trim();
                     active = api_obj.args.active || false;
                     u_access = api_obj.args.u_access || 10000;
                     email_active = api_obj.args.email_active || false;
                     api_obj.result.result = 0;
-                    if (login.trim().length < 6)
+                    if (login.length < 6)
                         return [2, false];
-                    ut = new UsersTable_1.UsersTable(api_obj.db_conn);
-                    return [4, ut.save_basic(uid, login, active, email, u_access, email_active)];
+                    ret_uid = 0;
+                    if (!(uid > 0)) return [3, 2];
+                    return [4, this.db_conn.Exec({ text: "UPDATE users SET login=$1, active=$2, email=$3, u_access=$4, email_active=$5 WHERE id=$6", values: [login, active, email, u_access, email_active, uid] })];
                 case 1:
-                    ret_uid = _a.sent();
+                    if (_a.sent())
+                        ret_uid = uid;
                     if (ret_uid > 0) {
-                        api_obj.result.result = ret_uid;
                         api_obj.result.messages.push((0, Message_1.newMessage)(Message_1.MSG_TYPES.SUSSCESS, "Сохранение пользователя", "\u041F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C \"".concat(login, "\" \u0443\u0441\u043F\u0435\u0448\u043D\u043E \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D")));
-                        return [2, true];
                     }
+                    return [3, 4];
+                case 2: return [4, this.db_conn.QueryOne({ text: "INSERT INTO users (login, active, email, u_access, email_active) VALUES ($1, $2, $3, $4, $5) RETURNING id", values: [login, active, email, u_access, email_active] })];
+                case 3:
+                    db_res = _a.sent();
+                    ret_uid = db_res.id;
+                    if (ret_uid > 0) {
+                        api_obj.result.messages.push((0, Message_1.newMessage)(Message_1.MSG_TYPES.SUSSCESS, "Сохранение пользователя", "\u041F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C \"".concat(login, "\" \u0443\u0441\u043F\u0435\u0448\u043D\u043E \u0441\u043E\u0437\u0434\u0430\u043D")));
+                    }
+                    _a.label = 4;
+                case 4:
+                    api_obj.result.result = ret_uid;
+                    if (ret_uid > 0)
+                        return [2, true];
                     api_obj.result.messages.push((0, Message_1.newMessage)(Message_1.MSG_TYPES.ERROR, "Сохранение пользователя", "Не могу сохранить пользователя"));
                     return [2, false];
             }
@@ -191,18 +206,19 @@ function save_user(api_obj) {
 }
 function set_password(api_obj) {
     return __awaiter(this, void 0, void 0, function () {
-        var uid, password, ut, q_ret;
+        var uid, password, sha_passw, q_ret;
         return __generator(this, function (_a) {
             switch (_a.label) {
                 case 0:
                     uid = api_obj.args.id || 0;
                     password = api_obj.args.password || '';
-                    if (uid === 0 && password.trim() === '') {
+                    password = password.trim();
+                    if (uid === 0 && password.length < 8) {
                         api_obj.result.messages.push((0, Message_1.newMessage)(Message_1.MSG_TYPES.ERROR, "Изменение пароля", "Не верно передан пользователь или пароль"));
                         return [2, false];
                     }
-                    ut = new UsersTable_1.UsersTable(api_obj.db_conn);
-                    return [4, ut.set_password(uid, password)];
+                    sha_passw = api_obj.db_conn.sha256(password);
+                    return [4, api_obj.db_conn.Exec({ text: "UPDATE users SET password=$1 WHERE id=$2", values: [sha_passw, uid] })];
                 case 1:
                     q_ret = _a.sent();
                     api_obj.result.result = q_ret;

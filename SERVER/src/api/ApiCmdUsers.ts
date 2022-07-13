@@ -9,7 +9,6 @@
 import { ApiObject } from './ApiObject';
 import { MSG_TYPES, Message, newMessage } from '../api/Message';
 
-import { UsersTable } from '../db/tables/UsersTable';
 import { UserEntity } from '../db/entityes/UserEntity';
 import { ApiUserEntity, getUserApi } from './entityes/ApiUserEntity';
 import { UsersSessionsTable } from '../db/tables/UsersSessionsTable';
@@ -24,8 +23,10 @@ async function cmd_login(api_obj:ApiObject):Promise<void>{
         api_obj.result.error = `В КОМАНДЕ "${api_obj.cmd}" НЕ ДОСТАТОЧНО АРГУМЕНТОВ`;
         return;
     }
-    var ut = new UsersTable(api_obj.db_conn);
-    var ue:UserEntity = await ut.getUserByAuth(login, password);
+
+    var db_res = await api_obj.db_conn.QueryOne({ text: "SELECT * FROM get_user_auth($1, $2)", values: [login, api_obj.db_conn.sha256(password)] });
+    var ue:UserEntity = new UserEntity(api_obj.db_conn, db_res);
+
     if(ue===null){
         api_obj.result.messages.push(newMessage(MSG_TYPES.ERROR, "Авторизация", "Не совпадают логин и пароль пользователя."));
         return;
@@ -117,8 +118,8 @@ async function test_user_double(api_obj:ApiObject):Promise<boolean>{
 async function save_user(api_obj:ApiObject):Promise<boolean>{
 
     var uid:number = api_obj.args.id || 0;
-    var login:string = api_obj.args.login || '';
-    var email:string = api_obj.args.email || '';
+    var login:string = api_obj.args.login || ''; login = login.trim();
+    var email:string = api_obj.args.email || ''; email = email.trim();
     var active:boolean = api_obj.args.active || false;
     var u_access:number = api_obj.args.u_access || 10000;
     var email_active:boolean = api_obj.args.email_active || false;
@@ -128,15 +129,29 @@ async function save_user(api_obj:ApiObject):Promise<boolean>{
     //var user_data:Object = api_obj.args.user_data || {};
 
     api_obj.result.result = 0;
-    if(login.trim().length < 6) return false;
+    if(login.length < 6) return false;
 
-    var ut:UsersTable = new UsersTable(api_obj.db_conn);
-    var ret_uid = await ut.save_basic(uid, login, active, email, u_access, email_active);
-    if(ret_uid > 0) {
-        api_obj.result.result = ret_uid;
-        api_obj.result.messages.push(newMessage(MSG_TYPES.SUSSCESS, "Сохранение пользователя", `Пользователь "${login}" успешно сохранен`));
-        return true;
+    var ret_uid = 0;
+    if(uid>0){
+        // СОХРАНЕНИЕ СУЩЕСТВУЮЩЕГО ПОЛЬЗОВАТЕЛЯ
+        if(await this.db_conn.Exec({ text:"UPDATE users SET login=$1, active=$2, email=$3, u_access=$4, email_active=$5 WHERE id=$6", values:[login, active, email, u_access, email_active, uid] })) ret_uid = uid;
+        if(ret_uid > 0) {
+            api_obj.result.messages.push(newMessage(MSG_TYPES.SUSSCESS, "Сохранение пользователя", `Пользователь "${login}" успешно сохранен`));
+        }
+    
+    }else{
+        // ДОБАВЛЕНИЕ НОВОГО ПОЛЬЗОВАТЕЛЯ
+        var db_res = await this.db_conn.QueryOne({ text: "INSERT INTO users (login, active, email, u_access, email_active) VALUES ($1, $2, $3, $4, $5) RETURNING id", values:[login, active, email, u_access, email_active] });
+        ret_uid = db_res.id;
+
+        if(ret_uid > 0) {
+            api_obj.result.messages.push(newMessage(MSG_TYPES.SUSSCESS, "Сохранение пользователя", `Пользователь "${login}" успешно создан`));
+        }
     }
+
+    api_obj.result.result = ret_uid;
+
+    if(ret_uid > 0) return true;
 
     api_obj.result.messages.push(newMessage(MSG_TYPES.ERROR, "Сохранение пользователя", "Не могу сохранить пользователя"))
     return false;
@@ -149,15 +164,16 @@ async function save_user(api_obj:ApiObject):Promise<boolean>{
  */
 async function set_password(api_obj:ApiObject):Promise<boolean>{
     var uid:number = api_obj.args.id || 0;
-    var password:string = api_obj.args.password || '';
+    var password:string = api_obj.args.password || ''; password = password.trim();
 
-    if(uid===0 && password.trim() === ''){
+    if(uid===0 && password.length < 8){
         api_obj.result.messages.push(newMessage(MSG_TYPES.ERROR, "Изменение пароля", "Не верно передан пользователь или пароль"))
         return false;
     }
 
-    var ut:UsersTable = new UsersTable(api_obj.db_conn);
-    var q_ret = await ut.set_password(uid, password);
+    var sha_passw = api_obj.db_conn.sha256(password);
+    var q_ret =  await api_obj.db_conn.Exec({ text: "UPDATE users SET password=$1 WHERE id=$2", values: [sha_passw,  uid] });
+
     api_obj.result.result = q_ret;
     if(q_ret){
         api_obj.result.messages.push(newMessage(MSG_TYPES.SUSSCESS, "Изменение пароля", `Новый пароль успешно сохранен`));

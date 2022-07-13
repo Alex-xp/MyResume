@@ -1,7 +1,6 @@
 import express, { Express, Request, Response } from 'express';
 import { DBConnector } from './DBConnector';
 
-import { UsersTable } from './tables/UsersTable';
 import { UserEntity } from "./entityes/UserEntity";
 
 import { UsersSessionsTable } from './tables/UsersSessionsTable';
@@ -73,8 +72,11 @@ export async function getCurrentUser(req: express.Request, res: express.Response
     if(sess !== null){
         // сессия найдена - пробуем найти пользователя
         var user_id:number = sess.uid;
-        var ut:UsersTable = new UsersTable(db_conn);
-        var user:UserEntity = await ut.getUserById(user_id);
+
+        var user:UserEntity = null;
+        var u = await db_conn.QueryOne({ text: "SELECT * FROM users WHERE id=$1",  values: [user_id] });
+        if(u !== null) user = new UserEntity(db_conn, u);
+
         if(user === null) { 
             // пользователь не найден
             _clearSession(res);
