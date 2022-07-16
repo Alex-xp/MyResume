@@ -22,6 +22,20 @@ class fError{
     public password_error:string = '';
 }
 
+class UserFormValidator{
+    public isError:boolean = false; /* Содержит ли форма ошибки */
+    public user:UserEntity = new UserEntity();
+    public password1: string = '';
+    public password2: string = '';
+    public errors: { /* тексты ошибок для вывода на форме по компонентам формы */
+        login: '',
+        password: ''
+    };
+
+    validate(form: EditUserDialog){}
+
+}
+
 
 interface IProps {
     onSaveUser: (u?:UserEntity)=>void
@@ -33,7 +47,8 @@ interface IState {
     password1:string,
     password2:string,
     setPassword:boolean,
-    f_error: fError
+    f_error: fError,
+    validator: UserFormValidator
 }
 
 
@@ -56,7 +71,8 @@ export class EditUserDialog extends React.Component <IProps, IState> {
             password1:'',
             password2:'',
             setPassword:false,
-            f_error: new fError()
+            f_error: new fError(),
+            validator: new UserFormValidator()
         };
     }
 
@@ -143,6 +159,115 @@ export class EditUserDialog extends React.Component <IProps, IState> {
         this.setState({ f_error: f_error });
     }
 
+    /** Отрисовка формы */
+    render_form(u:UserEntity): React.ReactNode{
+        
+        // требуется ли установка пароля
+        var isSetPassword = this.state.setPassword;
+        if(u.id < 1) isSetPassword = true;
+
+        var login_disabled = false;
+        //if(u.id > 0) login_disabled = true;
+
+        return (
+            <React.Fragment>
+                <Box sx={{padding:"10px"}}>
+
+                    {/* Логин, доступ и активность пользователя */}
+                    <Grid container spacing={2} sx={{marginTop:'10px'}}>
+                        <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                            <FormGroup>
+                                <FormControl>
+                                    <InputLabel htmlFor='u_login'>Логин</InputLabel>
+                                    <Input id='u_login' aria-describedby='u_login_hlp' size='small' sx={{width:"100%"}} disabled={login_disabled} value={u.login} onChange={ (e)=>{ u.login=e.target.value; this.setState({ user:u }); } } />
+                                    <FormHelperText id="u_login_hlp" sx={{color:"#880000"}}>{this.state.f_error.login_error}</FormHelperText>
+                                </FormControl>
+                            </FormGroup>
+                        </Grid>
+
+                        <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                            <FormGroup>
+                                <FormControl>
+                                    <InputLabel id="user_active_lbl">Уровень доступа</InputLabel>
+                                    <Select variant='standard' labelId='user_active_lbl' label="Уровень доступа" value={u.u_access} onChange={ (e)=>{ u.u_access = +(e.target.value); this.setState({ user:u }); } } size='small'>
+                                        <MenuItem value={10000}>Пользователь</MenuItem>
+                                        <MenuItem value={1000}>Продвинутый пользователь</MenuItem>
+                                        <MenuItem value={500}>Модератор</MenuItem>
+                                        <MenuItem value={100}>Администратор</MenuItem>
+                                        <MenuItem value={0}>Разработчик</MenuItem>
+                                    </Select>
+                                </FormControl>
+                            </FormGroup>
+                        </Grid>
+
+                        <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                            <FormGroup>
+                                <FormControlLabel label='Активность' control={<Switch checked={u.active} onChange={ (e)=>{ u.active=e.target.checked; this.setState({ user:u }); } } />} />
+                            </FormGroup>
+                        </Grid>
+                    </Grid>
+
+
+
+                    {/* e-mail и его активность */}
+                    <Grid container spacing={2} sx={{marginTop:'10px'}}>
+                        <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                            <FormGroup>
+                                <TextField type='email' variant='standard' label="E-mail" size='small' sx={{width:"100%"}} value={u.email} onChange={ (e)=>{ u.email=e.target.value; this.setState({ user:u }); } } />
+                            </FormGroup>
+                        </Grid>
+
+                        <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                            <FormGroup>
+                                &nbsp;
+                            </FormGroup>
+                        </Grid>
+
+                        <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                            <FormGroup>
+                                <FormControlLabel label='Достоверность e-mail' control={<Switch checked={u.email_active} onChange={ (e)=>{ u.email_active=e.target.checked; this.setState({ user:u }); } } />} />
+                            </FormGroup>
+                        </Grid>
+                    </Grid>
+
+
+
+                    {/* Смена пароля */}
+                    <Grid container spacing={2} sx={{marginTop:'10px'}}>
+                        <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                            <FormGroup>
+                                <FormControl>
+                                    <InputLabel htmlFor='u_passw'>Пароль</InputLabel>
+                                    <Input type='password' id='u_passw' aria-describedby='u_passw_hlp' size='small' sx={{width:"100%"}} value={this.state.password1} onChange={ (e)=>{ this.setState({ password1:e.target.value }); } } />
+                                    <FormHelperText id="u_passw_hlp" sx={{color:"#880000"}}>{this.state.f_error.password_error}</FormHelperText>
+                                </FormControl>
+                            </FormGroup>
+                        </Grid>
+
+                        <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                            <FormGroup>
+                                <TextField variant='standard' type='password' label="Повторить пароль" size='small' sx={{width:"100%"}} value={this.state.password2} onChange={ (e)=>{ this.setState({ password2:e.target.value }); } } />
+                            </FormGroup>
+                        </Grid>
+
+                        <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
+                            <FormGroup>
+                                <FormControlLabel label='Сменить пароль' control={<Switch checked={isSetPassword} onChange={ (e)=>{ this.setState({ setPassword:e.target.checked }); } } />} />
+                            </FormGroup>
+                        </Grid>
+                    </Grid>
+                </Box>
+
+            </React.Fragment>
+        );
+    }
+
+
+
+    /**
+     * Отрисовка всего диалога
+     * @returns 
+     */
     render(): React.ReactNode {
 
         var u:UserEntity = this.state.user;
@@ -154,9 +279,6 @@ export class EditUserDialog extends React.Component <IProps, IState> {
         var mdl_title = "Добавить пользователя";
         if(u.id > 0) mdl_title = "Изменить пользователя " + u.login;
 
-        var login_disabled = false;
-        //if(u.id > 0) login_disabled = true;
-
         return (
             <React.Fragment>
                 <Modal open={this.state.show} onClose={ ()=>{ this.setState({show:false});} } aria-labelledby="modal-modal-title">
@@ -167,94 +289,9 @@ export class EditUserDialog extends React.Component <IProps, IState> {
                                     <Typography id="modal-modal-title" variant="h6" component="h2">{mdl_title}</Typography>
                                     <Button onClick={()=>{ this.setShow(false) }}>X</Button>
                                 </Stack>
-                                <Box sx={{padding:"10px"}}>
 
-                                    {/* Логин, доступ и активность пользователя */}
-                                    <Grid container spacing={2} sx={{marginTop:'10px'}}>
-                                        <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-                                            <FormGroup>
-                                                <FormControl>
-                                                    <InputLabel htmlFor='u_login'>Логин</InputLabel>
-                                                    <Input id='u_login' aria-describedby='u_login_hlp' size='small' sx={{width:"100%"}} disabled={login_disabled} value={u.login} onChange={ (e)=>{ u.login=e.target.value; this.setState({ user:u }); } } />
-                                                    <FormHelperText id="u_login_hlp" sx={{color:"#880000"}}>{this.state.f_error.login_error}</FormHelperText>
-                                                </FormControl>
-                                            </FormGroup>
-                                        </Grid>
-
-                                        <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-                                            <FormGroup>
-                                                <FormControl>
-                                                    <InputLabel id="user_active_lbl">Уровень доступа</InputLabel>
-                                                    <Select variant='standard' labelId='user_active_lbl' label="Уровень доступа" value={u.u_access} onChange={ (e)=>{ u.u_access = +(e.target.value); this.setState({ user:u }); } } size='small'>
-                                                        <MenuItem value={10000}>Пользователь</MenuItem>
-                                                        <MenuItem value={1000}>Продвинутый пользователь</MenuItem>
-                                                        <MenuItem value={500}>Модератор</MenuItem>
-                                                        <MenuItem value={100}>Администратор</MenuItem>
-                                                        <MenuItem value={0}>Разработчик</MenuItem>
-                                                    </Select>
-                                                </FormControl>
-                                            </FormGroup>
-                                        </Grid>
-
-                                        <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-                                            <FormGroup>
-                                                <FormControlLabel label='Активность' control={<Switch checked={u.active} onChange={ (e)=>{ u.active=e.target.checked; this.setState({ user:u }); } } />} />
-                                            </FormGroup>
-                                        </Grid>
-                                    </Grid>
-
-
-
-                                    {/* e-mail и его активность */}
-                                    <Grid container spacing={2} sx={{marginTop:'10px'}}>
-                                        <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-                                            <FormGroup>
-                                                <TextField type='email' variant='standard' label="E-mail" size='small' sx={{width:"100%"}} value={u.email} onChange={ (e)=>{ u.email=e.target.value; this.setState({ user:u }); } } />
-                                            </FormGroup>
-                                        </Grid>
-
-                                        <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-                                            <FormGroup>
-                                                &nbsp;
-                                            </FormGroup>
-                                        </Grid>
-
-                                        <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-                                            <FormGroup>
-                                                <FormControlLabel label='Достоверность e-mail' control={<Switch checked={u.email_active} onChange={ (e)=>{ u.email_active=e.target.checked; this.setState({ user:u }); } } />} />
-                                            </FormGroup>
-                                        </Grid>
-                                    </Grid>
-
-
-
-                                    {/* Смена пароля */}
-                                    <Grid container spacing={2} sx={{marginTop:'10px'}}>
-                                        <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-                                            <FormGroup>
-                                                <FormControl>
-                                                    <InputLabel htmlFor='u_passw'>Пароль</InputLabel>
-                                                    <Input type='password' id='u_passw' aria-describedby='u_passw_hlp' size='small' sx={{width:"100%"}} value={this.state.password1} onChange={ (e)=>{ this.setState({ password1:e.target.value }); } } />
-                                                    <FormHelperText id="u_passw_hlp" sx={{color:"#880000"}}>{this.state.f_error.password_error}</FormHelperText>
-                                                </FormControl>
-                                            </FormGroup>
-                                        </Grid>
-
-                                        <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-                                            <FormGroup>
-                                                <TextField variant='standard' type='password' label="Повторить пароль" size='small' sx={{width:"100%"}} value={this.state.password2} onChange={ (e)=>{ this.setState({ password2:e.target.value }); } } />
-                                            </FormGroup>
-                                        </Grid>
-
-                                        <Grid item xs={12} sm={12} md={4} lg={4} xl={4}>
-                                            <FormGroup>
-                                                <FormControlLabel label='Сменить пароль' control={<Switch checked={isSetPassword} onChange={ (e)=>{ this.setState({ setPassword:e.target.checked }); } } />} />
-                                            </FormGroup>
-                                        </Grid>
-                                    </Grid>
-
-
-                                </Box>
+                                {this.render_form(u)}
+                                
                                 <Box>
                                     <Stack direction="row" justifyContent="flex-end" alignItems="center" spacing={2} sx={{ padding:"5px", borderTop: '1px solid #ccc' }}>
                                         <Button color="error" onClick={()=>{ this.setShow(false) }}>Отменить</Button>
