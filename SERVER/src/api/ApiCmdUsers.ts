@@ -95,14 +95,21 @@ async function set_user_activation(api_obj:ApiObject):Promise<boolean>{
  */
 async function test_user_double(api_obj:ApiObject):Promise<boolean>{
 
+    //console.log(api_obj.args);
+
     var uid:number = api_obj.args.id || 0;
     var login:string = api_obj.args.login || '';
-    if(uid===0) {api_obj.result.result = true; return true;} // не передан uid
-    if(login.trim() === '') {api_obj.result.result = true; return true;} // не передан логин
+
+    //console.log(uid, login);
+
+    //if(uid===0) {api_obj.result.result = true; return true;} // не передан uid
+    if(login.trim().length < 1) {api_obj.result.result = true; return true;} // не передан логин
 
     var db_res = await api_obj.db_conn.Query({ text:"SELECT * FROM users WHERE id<>$1 AND login=$2",  values: [uid, login] });
 
+    //console.log(db_res, db_res);
     if(db_res.length > 0) {api_obj.result.result = true; return true;} // существует в базе
+    
 
     api_obj.result.result = false; 
     return false;
@@ -134,14 +141,14 @@ async function save_user(api_obj:ApiObject):Promise<boolean>{
     var ret_uid = 0;
     if(uid>0){
         // СОХРАНЕНИЕ СУЩЕСТВУЮЩЕГО ПОЛЬЗОВАТЕЛЯ
-        if(await this.db_conn.Exec({ text:"UPDATE users SET login=$1, active=$2, email=$3, u_access=$4, email_active=$5 WHERE id=$6", values:[login, active, email, u_access, email_active, uid] })) ret_uid = uid;
+        if(await api_obj.db_conn.Exec({ text:"UPDATE users SET login=$1, active=$2, email=$3, u_access=$4, email_active=$5 WHERE id=$6", values:[login, active, email, u_access, email_active, uid] })) ret_uid = uid;
         if(ret_uid > 0) {
             api_obj.result.messages.push(newMessage(MSG_TYPES.SUSSCESS, "Сохранение пользователя", `Пользователь "${login}" успешно сохранен`));
         }
     
     }else{
         // ДОБАВЛЕНИЕ НОВОГО ПОЛЬЗОВАТЕЛЯ
-        var db_res = await this.db_conn.QueryOne({ text: "INSERT INTO users (login, active, email, u_access, email_active) VALUES ($1, $2, $3, $4, $5) RETURNING id", values:[login, active, email, u_access, email_active] });
+        var db_res = await api_obj.db_conn.QueryOne({ text: "INSERT INTO users (login, active, email, u_access, email_active) VALUES ($1, $2, $3, $4, $5) RETURNING id", values:[login, active, email, u_access, email_active] });
         ret_uid = db_res.id;
 
         if(ret_uid > 0) {

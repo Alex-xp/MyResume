@@ -138,11 +138,7 @@ function test_user_double(api_obj) {
                 case 0:
                     uid = api_obj.args.id || 0;
                     login = api_obj.args.login || '';
-                    if (uid === 0) {
-                        api_obj.result.result = true;
-                        return [2, true];
-                    }
-                    if (login.trim() === '') {
+                    if (login.trim().length < 1) {
                         api_obj.result.result = true;
                         return [2, true];
                     }
@@ -178,7 +174,7 @@ function save_user(api_obj) {
                         return [2, false];
                     ret_uid = 0;
                     if (!(uid > 0)) return [3, 2];
-                    return [4, this.db_conn.Exec({ text: "UPDATE users SET login=$1, active=$2, email=$3, u_access=$4, email_active=$5 WHERE id=$6", values: [login, active, email, u_access, email_active, uid] })];
+                    return [4, api_obj.db_conn.Exec({ text: "UPDATE users SET login=$1, active=$2, email=$3, u_access=$4, email_active=$5 WHERE id=$6", values: [login, active, email, u_access, email_active, uid] })];
                 case 1:
                     if (_a.sent())
                         ret_uid = uid;
@@ -186,7 +182,7 @@ function save_user(api_obj) {
                         api_obj.result.messages.push((0, Message_1.newMessage)(Message_1.MSG_TYPES.SUSSCESS, "Сохранение пользователя", "\u041F\u043E\u043B\u044C\u0437\u043E\u0432\u0430\u0442\u0435\u043B\u044C \"".concat(login, "\" \u0443\u0441\u043F\u0435\u0448\u043D\u043E \u0441\u043E\u0445\u0440\u0430\u043D\u0435\u043D")));
                     }
                     return [3, 4];
-                case 2: return [4, this.db_conn.QueryOne({ text: "INSERT INTO users (login, active, email, u_access, email_active) VALUES ($1, $2, $3, $4, $5) RETURNING id", values: [login, active, email, u_access, email_active] })];
+                case 2: return [4, api_obj.db_conn.QueryOne({ text: "INSERT INTO users (login, active, email, u_access, email_active) VALUES ($1, $2, $3, $4, $5) RETURNING id", values: [login, active, email, u_access, email_active] })];
                 case 3:
                     db_res = _a.sent();
                     ret_uid = db_res.id;
